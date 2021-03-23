@@ -13,7 +13,7 @@ use namespace HTL\SGMLStreamInterfaces;
  * SimpleUserElement instead if you don't intend to write to your Flow.
  */
 abstract xhp class SimpleUserElementWithWritableFlow extends RootElement {
-  protected bool $hasBeenStreamed = false;
+  private bool $hasBeenStreamed = false;
 
   /**
    * Return your representation by composing something Streamable. You may not
@@ -27,7 +27,9 @@ abstract xhp class SimpleUserElementWithWritableFlow extends RootElement {
   final public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
   ): void {
-    invariant(!$this->hasBeenStreamed, '%s was streamed twice', static::class);
+    if ($this->hasBeenStreamed) {
+      throw new _Private\UseAfterRenderException(static::class);
+    }
     $this->hasBeenStreamed = true;
     $stream->addSnippet(new ComposableSnippet(
       $flow ==> $stream->streamOf($this->compose($flow->makeCopyForChild())),

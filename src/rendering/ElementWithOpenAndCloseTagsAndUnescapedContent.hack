@@ -5,7 +5,7 @@ use namespace HTL\SGMLStreamInterfaces;
 
 trait ElementWithOpenAndCloseTagsAndUnescapedContent {
   require extends RootElement;
-  protected bool $hasBeenStreamed = false;
+  private bool $hasBeenStreamed = false;
 
   /**
    * For `<style>`, use `style`. For `<script>`, use `script`.
@@ -19,7 +19,9 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
   final public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
   ): void {
-    invariant(!$this->hasBeenStreamed, '%s was streamed twice', static::class);
+    if ($this->hasBeenStreamed) {
+      throw new _Private\UseAfterRenderException(static::class);
+    }
     $this->hasBeenStreamed = true;
 
     $opening_tag = render_opening_tag(
