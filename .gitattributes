@@ -1,0 +1,4 @@
+.github/ export-ignore
+tests/ export-ignore
+.hhconfig export-ignore
+hhast-lint.json export-ignore

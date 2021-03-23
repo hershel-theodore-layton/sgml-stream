@@ -1,0 +1,16 @@
+namespace HTL\SGMLStream\_Private;
+
+use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
+
+final class Chunk {
+  public string $buf = '';
+  private ?SGMLStreamInterfaces\Snippet $snippet;
+
+  public function setSnippet(SGMLStreamInterfaces\Snippet $snippet): void {
+    $this->snippet = $snippet;
+  }
+
+  public function getSnippet(): SGMLStreamInterfaces\Snippet {
+    return $this->snippet ?? new SGMLStream\NullSnippet();
+  }
+}

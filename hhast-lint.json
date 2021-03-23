@@ -1,0 +1,21 @@
+{
+  "roots": [
+    "src/",
+    "tests/"
+  ],
+  "builtinLinters": "all",
+  "extraLinters": [
+    "Facebook\\HHAST\\NoEmptyStatementsLinter",
+    "Facebook\\HHAST\\FinalOrAbstractClassLinter"
+  ],
+  "overrides": [
+    {
+      "patterns": [
+        "tests/*"
+      ],
+      "disabledLinters": [
+        "Facebook\\HHAST\\CamelCasedMethodsUnderscoredFunctionsLinter"
+      ]
+    }
+  ]
+}

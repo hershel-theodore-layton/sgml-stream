@@ -1,0 +1,16 @@
+{
+  "name": "hershel-theodore-layton/sgml-stream",
+  "description": "A streaming implementation of XHP for HHVM.",
+  "license": "MIT",
+  "require": {
+    "hhvm": "^4.73",
+    "hhvm/hsl": "^4.41",
+    "hershel-theodore-layton/sgml-stream-interfaces": "dev-master"
+  },
+  "require-dev": {
+    "hhvm/hhvm-autoload": "^3.2",
+    "hhvm/hhast": "^4.64",
+    "hhvm/hacktest": "^2.2",
+    "facebook/fbexpect": "^2.7"
+  }
+}
