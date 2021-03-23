@@ -10,6 +10,7 @@ use namespace HTL\SGMLStreamInterfaces;
  */
 final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
   private ?Awaitable<vec<SGMLStreamInterfaces\Snippet>> $snippetsAwaitable;
+  private ?\Throwable $caughtThrowable;
 
   public function __construct(
     private (function(
@@ -20,11 +21,16 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
   public async function primeAsync(
     SGMLStreamInterfaces\CopyableFlow $flow,
   ): Awaitable<void> {
-    $this->snippetsAwaitable = async {
-      $stream = await ($this->childFunc)($flow);
-      return $stream->collect();
-    };
-    $snippets = await $this->snippetsAwaitable;
+    try {
+      $this->snippetsAwaitable = async {
+        $stream = await ($this->childFunc)($flow);
+        return $stream->collect();
+      };
+      $snippets = await $this->snippetsAwaitable;
+    } catch (\Throwable $t) {
+      $this->caughtThrowable = $t;
+      return;
+    }
 
     $awaitables = vec[];
     foreach ($snippets as $snippet) {
@@ -38,11 +44,10 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
     SGMLStreamInterfaces\Consumer $consumer,
   ): Awaitable<void> {
     $snippets_awaitable = $this->snippetsAwaitable;
-    invariant(
-      $snippets_awaitable is nonnull,
-      '%s was not primed before',
-      static::class,
-    );
+    if ($snippets_awaitable is null) {
+      throw $this->caughtThrowable ??
+        new _Private\SnippetNotPrimedException(static::class);
+    }
     if (!Asio\has_finished($snippets_awaitable)) {
       concurrent {
         await $consumer->receiveWaitNotificationAsync();

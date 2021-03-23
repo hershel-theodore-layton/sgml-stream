@@ -12,6 +12,8 @@ use namespace HTL\SGMLStreamInterfaces;
  */
 final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
   private ?Awaitable<string> $stringAwaitable;
+  private ?\Throwable $caughtThrowable;
+
   public function __construct(
     private SGMLStreamInterfaces\ToSGMLStringAsync $toSGMLStringAsync,
   ) {}
@@ -19,19 +21,22 @@ final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
   public async function primeAsync(
     SGMLStreamInterfaces\CopyableFlow $_flow,
   ): Awaitable<void> {
-    $this->stringAwaitable = $this->toSGMLStringAsync->toHTMLStringAsync();
-    await $this->stringAwaitable;
+    try {
+      $this->stringAwaitable = $this->toSGMLStringAsync->toHTMLStringAsync();
+      await $this->stringAwaitable;
+    } catch (\Throwable $t) {
+      $this->caughtThrowable = $t;
+    }
   }
 
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
   ): Awaitable<void> {
     $string_awaitable = $this->stringAwaitable;
-    invariant(
-      $string_awaitable is nonnull,
-      '%s was not primed before',
-      static::class,
-    );
+    if ($string_awaitable is null) {
+      throw $this->caughtThrowable ??
+        new _Private\SnippetNotPrimedException(static::class);
+    }
     if (!Asio\has_finished($string_awaitable)) {
       concurrent {
         await $consumer->receiveWaitNotificationAsync();

@@ -7,6 +7,7 @@ use namespace HTL\SGMLStreamInterfaces;
  */
 final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
   private ?vec<SGMLStreamInterfaces\Snippet> $snippets;
+  private ?\Throwable $caughtThrowable;
 
   public function __construct(
     private (function(
@@ -17,7 +18,12 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
   public async function primeAsync(
     SGMLStreamInterfaces\CopyableFlow $flow,
   ): Awaitable<void> {
-    $this->snippets = ($this->childFunc)($flow)->collect();
+    try {
+      $this->snippets = ($this->childFunc)($flow)->collect();
+    } catch (\Throwable $t) {
+      $this->caughtThrowable = $t;
+      return;
+    }
 
     $awaitables = vec[];
     foreach ($this->snippets as $snippet) {
@@ -30,11 +36,10 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
   ): Awaitable<void> {
-    invariant(
-      $this->snippets is nonnull,
-      '%s was not primed before',
-      static::class,
-    );
+    if ($this->snippets is null) {
+      throw $this->caughtThrowable ??
+        new _Private\SnippetNotPrimedException(static::class);
+    }
 
     foreach ($this->snippets as $snippet) {
       /* HHAST_IGNORE_ERROR[DontAwaitInALoop]
