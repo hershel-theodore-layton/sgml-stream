@@ -108,7 +108,7 @@ abstract xhp class RootElement
   private function appendXHPChildren(Traversable<?XHPChild> $children): void {
     foreach ($children as $child) {
       if ($child is SGMLStreamInterfaces\FragElement) {
-        $this->appendXHPChildren($child->getChildren());
+        $this->appendXHPChildren($child->getFragChildren());
       } else if ($child is Traversable<_>) {
         $this->appendTraversable($child);
       } else if ($child is nonnull) {
@@ -120,7 +120,7 @@ abstract xhp class RootElement
   private function appendTraversable(Traversable<mixed> $children): void {
     foreach ($children as $child) {
       if ($child is SGMLStreamInterfaces\FragElement) {
-        $this->appendXHPChildren($child->getChildren());
+        $this->appendXHPChildren($child->getFragChildren());
       } else if ($child is Traversable<_>) {
         $this->appendTraversable($child);
       } else if ($child is XHPChild) {
