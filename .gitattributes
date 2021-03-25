@@ -2,3 +2,4 @@
 tests/ export-ignore
 .hhconfig export-ignore
 hhast-lint.json export-ignore
+docs/ export-ignore
