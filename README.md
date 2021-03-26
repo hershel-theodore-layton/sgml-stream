@@ -6,6 +6,10 @@ A streaming implementation of XHP for HHVM
 
 This library is an alternative for [xhp-lib](https://github.com/facebook/xhp-lib). Xhp-lib has been open sourced by Facebook. If you have never used xhp before, you can find [general xhp documentation](https://docs.hhvm.com/hack/XHP/introduction) here. This information describes how xhp (the underlying technology below xhp-lib and sgml-stream) works. It will often explain things from the perspective of xhp-lib. If you have a general understanding of xhp and the basics of xhp-lib. You can find [sgml-stream specific documentation](https://github.com/hershel-theodore-layton/sgml-stream/blob/master/docs/index.md) here. It will also help if you have a basic understanding of [async and await](https://docs.hhvm.com/hack/asynchronous-operations/introduction) in Hack.
 
+## Heads-up
+
+You **MUST** enable the `.hhconfig` setting `check_xhp_attribute` when using sgml-stream. We don't validate `@required` at runtime when you access an attribute. We trust that the typechecker has made sure all required attributes are present. Xhp-lib does validate `@required` at runtime. If you do not turn this setting on, your `@required` attributes might be `null` when read, which is not typesafe.
+
 ## Feature differences between xhp-lib and sgml-stream
 
 ### Rendering model
