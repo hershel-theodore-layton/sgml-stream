@@ -1,3 +1,4 @@
+/** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\_Private;
 
 use namespace HTL\SGMLStreamInterfaces;

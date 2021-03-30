@@ -1,3 +1,4 @@
+/** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\_Private;
 
 function hhvm_may_want_this_method(): nothing {

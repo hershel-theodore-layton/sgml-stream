@@ -1,3 +1,4 @@
+/** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream;
 
 use type Facebook\HackTest\HackTest;
