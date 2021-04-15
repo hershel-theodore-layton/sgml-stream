@@ -27,6 +27,11 @@ final class FirstComeFirstServedFlow
     dict<string, mixed> $constants,
     dict<string, mixed> $variables,
   ): this {
+    foreach ($variables as $v => $_) {
+      if (C\contains_key($constants, $v)) {
+        throw new _Private\RedeclaredConstantException($v, 'variable');
+      }
+    }
     return new static($constants, $variables);
   }
 
@@ -38,27 +43,37 @@ final class FirstComeFirstServedFlow
   }
 
   public function declareConstant(string $key, mixed $value): void {
-    if (
-      C\contains_key($this->constants, $key) ||
-      C\contains_key($this->variables, $key)
-    ) {
+    if (C\contains_key($this->constants, $key)) {
       throw new _Private\RedeclaredConstantException($key, 'constant');
+    }
+    if (C\contains_key($this->variables, $key)) {
+      throw new _Private\RedeclaredConstantException(
+        $key,
+        'constant',
+        'variable',
+      );
     }
     $this->constants[$key] = $value;
   }
 
   public function get(string $key): mixed {
-    return $this->constants[$key] ?? $this->variables[$key] ?? null;
+    if (C\contains_key($this->constants, $key)) {
+      return $this->constants[$key];
+    } else if (C\contains_key($this->variables, $key)) {
+      return $this->variables[$key];
+    } else {
+      return null;
+    }
   }
 
   public function getx(string $key): mixed {
-    if (
-      !C\contains_key($this->constants, $key) &&
-      !C\contains_key($this->variables, $key)
-    ) {
+    if (C\contains_key($this->constants, $key)) {
+      return $this->constants[$key];
+    } else if (C\contains_key($this->variables, $key)) {
+      return $this->variables[$key];
+    } else {
       throw new _Private\ValueNotPresentException($key);
     }
-    return $this->constants[$key] ?? $this->variables[$key];
   }
 
   public function has(string $key): bool {

@@ -32,7 +32,7 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
     }
     foreach ($variables as $v => $_) {
       invariant(
-        $v[0] === '!',
+        $v[0] !== '!',
         'Variables may not start with an `!`, this is reserved from constants, got "%s"',
         $v,
       );

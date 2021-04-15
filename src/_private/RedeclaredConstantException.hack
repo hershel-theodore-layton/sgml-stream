@@ -6,13 +6,19 @@ use namespace HTL\SGMLStreamInterfaces;
 final class RedeclaredConstantException
   extends \Exception
   implements SGMLStreamInterfaces\RedeclaredConstantException {
-  public function __construct(private string $key, string $what) {
+  public function __construct(
+    private string $key,
+    string $set,
+    string $present = 'constant',
+  ) {
     parent::__construct(
       'You may not declare the '.
-      $what.
+      $set.
       ' '.
       $key.
-      ', because a constant with the name already exists.',
+      ', because a '.
+      $present.
+      ' with the name already exists.',
     );
   }
 
