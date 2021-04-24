@@ -48,7 +48,6 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
     SGMLStreamInterfaces\Consumer $consumer,
   ): Awaitable<void> {
     $snippets_awaitable = async {
-      $this->awaitable;
       if ($this->awaitable is null) {
         throw $this->caughtThrowable ??
           new _Private\SnippetNotPrimedException(static::class);
