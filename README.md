@@ -20,7 +20,7 @@ Let's illustrate with the following example:
 
 ```HTML
 <html>
-  <head><link rel="stylesheet" src="..." /></head>
+  <head><link rel="stylesheet" href="..." /></head>
   <body>
     <MyFastAsynchronousElement id="a" />
     <MySlowAsynchronousElement id="b" />
