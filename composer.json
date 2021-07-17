@@ -12,5 +12,13 @@
     "hhvm/hhast": "^4.64",
     "hhvm/hacktest": "^2.2",
     "facebook/fbexpect": "^2.7"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "rm vendor/autoload.php vendor/composer/*.php"
+    ],
+    "post-update-cmd": [
+      "rm vendor/autoload.php vendor/composer/*.php"
+    ]
   }
 }
