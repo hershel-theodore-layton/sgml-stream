@@ -4,14 +4,17 @@
 
 The `RootElement` base class should not be used when you want to compose your result from other tags / `Streamable`s. `RootElement` deals with `SnippetStream` directly. Direct access to `SnippetStream` is like wielding a chainsaw. You can make beautiful art with it (search for _Chainsaw art_), but inexperienced users might hurt themselves or others. `SnippetStream->addSafeSGML(string $sgml): void` should be avoided in almost all cases. This powerful tool is as close as you will get to writing directly to the network. **There is no filtering or escaping between you and the network when you call this method.** If you really do need it, skip this chapter.
 
-Sgml-stream offers four useful base classes built-in. These should suffice for most uses. There are however other useful concepts out there that are not touched on by these four. If you want to use such a concept, you can write your own base class. The built-in base classes are:
+Sgml-stream offers five useful base classes built-in. These should suffice for most uses. There are however other useful concepts out there that are not touched on by these five. If you want to use such a concept, you can write your own base class. The built-in base classes are:
 
+ - `DissolvableUserElement`
  - `SimpleUserElement`
  - `SimpleUserElementWithWritableFlow`
  - `AsynchronousUserElement`
  - `AsynchronousUserElementWithWritableFlow`
 
-`SimpleUserElement` should be your default base class. It has the highest performance out of the four offered here. You compose your result in `->compose(Flow $flow): Streamable` and return the result. You can read any value from you parent scopes on the `Flow`. Your own scope is read-only and empty. Sgml-stream does not expect you to write to your `Flow`. **DO NOT, I REPEAT, DO NOT** cast your `Flow` to a `WritableFlow`. `$flow as WritableFlow->assignVariable(...)` is NOT okay. If you need to assign variables or declare constants, use `SimpleUserElementWithWritableFlow`.
+`DissolvableUserElement` is the fastest base class meant for creating cheap wrapping elements that do not depend on the state in the `Flow`. This element type dissolves as soon as it is added to a stream and appends the return value of `->compose()` immediately. This reduces the amount of tiny objects and strings that need to be created to render your tree. The logic in `->compose()` runs before any async work starts. So if you method takes a long time, it might be beneficial to use a `SimpleUserElement` instead, since this code will start running whilst your async work has been dispatched. Switching to and from this element type causes an observable behavior difference if you depended on the order in which `->compose()` methods executed. If your element is not pure (rendering it has a side effect or it reads from a global), do not use this type.
+
+`SimpleUserElement` should be your default base class if you depend on the state in the `Flow`. You compose your result in `->compose(Flow $flow): Streamable` and return the result. You can read any value from you parent scopes on the `Flow`. Your own scope is read-only and empty. Sgml-stream does not expect you to write to your `Flow`. **DO NOT, I REPEAT, DO NOT** cast your `Flow` to a `WritableFlow`. `$flow as WritableFlow->assignVariable(...)` is NOT okay. If you need to assign variables or declare constants, use `SimpleUserElementWithWritableFlow`.
 
 `SimpleUserElementWithWritableFlow` is identical in every way to `SimpleUserElement`, but it gives you a `WritableFlow`. Behind the scenes, we make a copy of your parent scope before your `->compose()` method is called. If you don't write to your `Flow`, see `SimpleUserElement`.
 

@@ -10,6 +10,12 @@ use namespace HTL\SGMLStreamInterfaces;
  *
  * You don't get write access to your Flow. If you need write access, see
  * SimpleUserElementWithWritableFlow.
+ *
+ * If you do not depend on the Flow at all and your element is pure, you can
+ * look at DissolvableUserElement. This reduces the amount of wrapping objects
+ * created and moves the processing in compose() to an earlier stage of the
+ * rendering process. You should NOT do this if your processing is expensive
+ * or depends on global state.
  */
 abstract xhp class SimpleUserElement extends RootElement {
   private bool $hasBeenStreamed = false;

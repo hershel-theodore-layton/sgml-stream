@@ -12,7 +12,6 @@ use namespace HTL\SGMLStreamInterfaces;
 final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
   private ?Awaitable<(vec<SGMLStreamInterfaces\Snippet>, Awaitable<mixed>)>
     $awaitable;
-  private ?\Throwable $caughtThrowable;
 
   public function __construct(
     private (function(
@@ -23,22 +22,17 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
   public async function primeAsync(
     SGMLStreamInterfaces\CopyableFlow $flow,
   ): Awaitable<void> {
-    try {
-      $this->awaitable = async {
-        $stream = await ($this->childFunc)($flow);
-        $snippets = $stream->collect();
+    $this->awaitable = async {
+      $stream = await ($this->childFunc)($flow);
+      $snippets = $stream->collect();
 
-        $awaitables = vec[];
-        foreach ($snippets as $snippet) {
-          $awaitables[] = $snippet->primeAsync($flow);
-        }
+      $awaitables = vec[];
+      foreach ($snippets as $snippet) {
+        $awaitables[] = $snippet->primeAsync($flow);
+      }
 
-        return tuple($snippets, AwaitAllWaitHandle::fromVec($awaitables));
-      };
-    } catch (\Throwable $t) {
-      $this->caughtThrowable = $t;
-      return;
-    }
+      return tuple($snippets, AwaitAllWaitHandle::fromVec($awaitables));
+    };
 
     list($_, $prime_async_of_children) = await $this->awaitable;
     await $prime_async_of_children;
@@ -49,8 +43,7 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
   ): Awaitable<void> {
     $snippets_awaitable = async {
       if ($this->awaitable is null) {
-        throw $this->caughtThrowable ??
-          new _Private\SnippetNotPrimedException(static::class);
+        throw new _Private\SnippetNotPrimedException(static::class);
       }
       list($snippets, $_) = await $this->awaitable;
       return $snippets;
