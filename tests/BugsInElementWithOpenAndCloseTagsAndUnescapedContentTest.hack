@@ -5,7 +5,7 @@ use function Facebook\FBExpect\expect;
 use type Facebook\HackTest\HackTest;
 use namespace HTL\SGMLStream;
 
-final class rawtext extends SGMLStream\RootElement {
+final xhp class rawtext extends SGMLStream\RootElement {
   protected string $tagName = 'rawtext';
 
   use SGMLStream\ElementWithOpenAndCloseTagsAndUnescapedContent;
