@@ -50,6 +50,7 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
         '%s may only have one child and its type must be string',
         static::class,
       );
+      $closing_tag_prefix = '</'.$this->tagName;
       // @see https://html.spec.whatwg.org/#script-data-state for script
       // @see https://html.spec.whatwg.org/#rawtext-state for style. Follow the
       // the `<`, `/`, (ASCII alpha) parser flow. You'll end up here
@@ -58,13 +59,17 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
       // If this invariant does not protect against premature script data /
       // RAWTEXT end, please file a bug.
       invariant(
-        !Str\contains($child, '</'.$this->tagName),
+        !Str\contains_ci($child, $closing_tag_prefix),
         'The content contained something that could be interpreted as a '.
         'closing tag {%s}, which may cause your document to be parsed '.
         'incorrectly. If you control this content, try escaping this '.
         'problematic content. If you do not control this content, this might '.
         'be a failed injection attack.',
-        '</'.$this->tagName,
+        Str\slice(
+          $child,
+          Str\search_ci($child, $closing_tag_prefix) as nonnull,
+          Str\length($closing_tag_prefix),
+        ),
       );
       $stream->addSafeSGML($child);
     }
