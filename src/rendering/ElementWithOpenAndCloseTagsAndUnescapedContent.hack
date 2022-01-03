@@ -50,6 +50,11 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
         '%s may only have one child and its type must be string',
         static::class,
       );
+      // `</style>` is not the only way to end a <style>... block.
+      // Weird things like `</style/>` work as well.
+      // Just throw as soon as `</style` is detected.
+      // This yields false positives for `</styles`, since
+      // this is not a valid end tag for `<style>`.
       $closing_tag_prefix = '</'.$this->tagName;
       // @see https://html.spec.whatwg.org/#script-data-state for script
       // @see https://html.spec.whatwg.org/#rawtext-state for style. Follow the
