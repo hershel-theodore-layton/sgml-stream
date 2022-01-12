@@ -9,6 +9,7 @@ use namespace HTL\SGMLStream;
 final xhp class rawtext extends SGMLStream\RootElement {
   /* Remove this property when removing the requirement from the trait. */
   protected string $tagName = 'rawtext';
+  const string TAG_NAME = 'rawtext';
 
   use SGMLStream\ElementWithOpenAndCloseTagsAndUnescapedContent;
 }
