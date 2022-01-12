@@ -6,7 +6,8 @@
   "builtinLinters": "all",
   "extraLinters": [
     "Facebook\\HHAST\\NoEmptyStatementsLinter",
-    "Facebook\\HHAST\\FinalOrAbstractClassLinter"
+    "Facebook\\HHAST\\FinalOrAbstractClassLinter",
+    "Facebook\\HHAST\\HHClientLinter"
   ],
   "overrides": [
     {

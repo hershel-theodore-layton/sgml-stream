@@ -3,15 +3,14 @@
   "description": "A streaming implementation of XHP for HHVM.",
   "license": "MIT",
   "require": {
-    "hhvm": "^4.73",
-    "hhvm/hsl": "^4.41",
-    "hershel-theodore-layton/sgml-stream-interfaces": "^0.5"
+    "hhvm": "^4.102",
+    "hershel-theodore-layton/sgml-stream-interfaces": "^0.6"
   },
   "require-dev": {
     "hhvm/hhvm-autoload": "^3.2",
-    "hhvm/hhast": "^4.64",
-    "hhvm/hacktest": "^2.2",
-    "facebook/fbexpect": "^2.7"
+    "hhvm/hhast": "^4.102",
+    "hhvm/hacktest": "^2.3",
+    "facebook/fbexpect": "^2.8"
   },
   "scripts": {
     "post-install-cmd": [

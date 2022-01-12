@@ -5,7 +5,9 @@ use function Facebook\FBExpect\expect;
 use type Facebook\HackTest\HackTest;
 use namespace HTL\SGMLStream;
 
+/* HHAST_FIXME[5635] (Duplicated property `tagName`) */
 final xhp class rawtext extends SGMLStream\RootElement {
+  /* Remove this property when removing the requirement from the trait. */
   protected string $tagName = 'rawtext';
 
   use SGMLStream\ElementWithOpenAndCloseTagsAndUnescapedContent;
