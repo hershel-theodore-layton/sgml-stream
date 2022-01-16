@@ -11,12 +11,6 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
   /**
    * For `<style>`, use `style`. For `<script>`, use `script`.
    */
-  <<_Private\UnstableAPI(
-    'This property is intended to mimic a constant. Constants in traits are '.
-    'supported since https://hhvm.com/blog/2021/02/16/hhvm-4.97.html'.
-    'Do not reassign this property. The value must match the value of TAG_NAME.',
-  )>>
-  protected string $tagName;
   abstract const string TAG_NAME;
 
   final public function placeIntoSnippetStream(
@@ -27,14 +21,12 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
     }
     $this->hasBeenStreamed = true;
 
-    _Private\validate_tag_name(static::class, $this->tagName, static::TAG_NAME);
-
     $opening_tag = render_opening_tag(
-      $this->tagName,
+      static::TAG_NAME,
       $this->getDataAndAriaAttributes(),
       $this->getDeclaredAttributes(),
     );
-    $closing_tag = '</'.$this->tagName.'>';
+    $closing_tag = '</'.static::TAG_NAME.'>';
 
     $stream->addSafeSGML($opening_tag);
 
@@ -59,7 +51,7 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
       // Just throw as soon as `</style` is detected.
       // This yields false positives for `</styles`, since
       // this is not a valid end tag for `<style>`.
-      $closing_tag_prefix = '</'.$this->tagName;
+      $closing_tag_prefix = '</'.static::TAG_NAME;
       // @see https://html.spec.whatwg.org/#script-data-state for script
       // @see https://html.spec.whatwg.org/#rawtext-state for style. Follow the
       // the `<`, `/`, (ASCII alpha) parser flow. You'll end up here

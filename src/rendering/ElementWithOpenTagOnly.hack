@@ -11,12 +11,6 @@ trait ElementWithOpenTagOnly {
   /**
    * For `<br>`, use `br`. For `<img>`, use `img`.
    */
-  <<_Private\UnstableAPI(
-    'This property is intended to mimic a constant. Constants in traits are '.
-    'supported since https://hhvm.com/blog/2021/02/16/hhvm-4.97.html'.
-    'Do not reassign this property. The value must match the value of TAG_NAME.',
-  )>>
-  protected string $tagName;
   abstract const string TAG_NAME;
 
   final public function placeIntoSnippetStream(
@@ -27,10 +21,8 @@ trait ElementWithOpenTagOnly {
     }
     $this->hasBeenStreamed = true;
 
-    _Private\validate_tag_name(static::class, $this->tagName, static::TAG_NAME);
-
     $opening_tag = render_opening_tag(
-      $this->tagName,
+      static::TAG_NAME,
       $this->getDataAndAriaAttributes(),
       $this->getDeclaredAttributes(),
     );

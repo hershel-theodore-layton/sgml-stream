@@ -10,12 +10,6 @@ trait ElementWithOpenAndCloseTags {
   /**
    * For `<div>`, use `div`. For `<span>`, use `span`.
    */
-  <<_Private\UnstableAPI(
-    'This property is intended to mimic a constant. Constants in traits are '.
-    'supported since https://hhvm.com/blog/2021/02/16/hhvm-4.97.html.'.
-    'Do not reassign this property. The value must match the value of TAG_NAME.',
-  )>>
-  protected string $tagName;
   abstract const string TAG_NAME;
 
   final public function placeIntoSnippetStream(
@@ -26,16 +20,14 @@ trait ElementWithOpenAndCloseTags {
     }
     $this->hasBeenStreamed = true;
 
-    _Private\validate_tag_name(static::class, $this->tagName, static::TAG_NAME);
-
     $stream->addSafeSGML(
       render_opening_tag(
-        $this->tagName,
+        static::TAG_NAME,
         $this->getDataAndAriaAttributes(),
         $this->getDeclaredAttributes(),
       ),
     );
     $this->placeMyChildrenIntoSnippetStream($stream);
-    $stream->addSafeSGML('</'.$this->tagName.'>');
+    $stream->addSafeSGML('</'.static::TAG_NAME.'>');
   }
 }
