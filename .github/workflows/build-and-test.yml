@@ -16,6 +16,7 @@ jobs:
         hhvm:
           - '4.102'
           - '4.128'
+          - '4.153'
           - latest
           - nightly
     runs-on: ${{matrix.os}}-latest
