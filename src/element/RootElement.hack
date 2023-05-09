@@ -263,48 +263,4 @@ abstract xhp class RootElement
   private static function typeName(mixed $mixed): string {
     return \is_object($mixed) ? \get_class($mixed) : \gettype($mixed);
   }
-
-  ////////////////////////////////////////////////////
-  //// Pretend this stuff doesn't exist.          ////
-  //// These methods start with two underscores.  ////
-  //// HHVM may emit similarly named methods.     ////
-  //// I WILL THROW AN `\Error` IF YOU CALL THEM. ////
-  //// If HHVM calls them internally, ¯\_(ツ)_/¯. ////
-  ////////////////////////////////////////////////////
-
-  final protected function __flushSubtree(): Awaitable<nothing> {
-    return _Private\hhvm_may_want_this_method();
-  }
-
-  <<__MemoizeLSB>>
-  final public static function __xhpReflectionAttributes(
-  ): dict<string, nothing> {
-    return _Private\hhvm_may_want_this_method();
-  }
-
-  protected static function __legacySerializedXHPChildrenDeclaration(): mixed {
-    return _Private\hhvm_may_want_this_method();
-  }
-
-  <<__MemoizeLSB>>
-  final public static function __xhpReflectionChildrenDeclaration(): nothing {
-    return _Private\hhvm_may_want_this_method();
-  }
-
-  final public static function __xhpReflectionCategoryDeclaration(
-  ): keyset<string> {
-    return _Private\hhvm_may_want_this_method();
-  }
-
-  protected function __xhpChildrenDeclaration(): mixed {
-    return _Private\hhvm_may_want_this_method();
-  }
-
-  public function __getChildrenDeclaration(): string {
-    return _Private\hhvm_may_want_this_method();
-  }
-
-  final public function __getChildrenDescription(): string {
-    return _Private\hhvm_may_want_this_method();
-  }
 }
