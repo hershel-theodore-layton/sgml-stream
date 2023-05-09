@@ -6,39 +6,25 @@ use namespace HTL\SGMLStreamInterfaces;
 /**
  * @deprecated Kept for backwards compatibility with v0.x.
  *
- * Base class for tags that must await something first, before composing
- * children. If you don't need to await something, use SimpleUserElement.
- * AsynchronousUserElement comes with an extra runtime cost. It checks if your
- * Awaitable is done, to inform the Consumer that there is some dead time. If
- * your composeAsync method does not await anything, this check will always
- * return false, wasting some cycles checking for it.
- *
- * You don't get write access to your Flow. If you need write access, see
- * AsynchronousUserElementWithWritableFlow.
+ * Any `AsynchronousUserElement` can be expressed as an `AsynchronousElement`.
+ * Please consider using `AsynchronousElement` for new code.
  */
-abstract xhp class AsynchronousUserElement extends RootElement {
-  private bool $hasBeenStreamed = false;
+abstract xhp class AsynchronousUserElement extends AsynchronousElement {
+  use IgnoreSuccessorFlow;
 
   /**
    * Return your representation by composing something Streamable. You may not
    * call methods on the Flow after your returned Awaitable resolves.
    */
   abstract protected function composeAsync(
-    SGMLStreamInterfaces\Flow $flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable>;
 
   <<__Override>>
-  final public function placeIntoSnippetStream(
-    SGMLStreamInterfaces\SnippetStream $stream,
-  ): void {
-    if ($this->hasBeenStreamed) {
-      throw new _Private\UseAfterRenderException(static::class);
-    }
-    $this->hasBeenStreamed = true;
-    $stream->addSnippet(
-      new AwaitableSnippet(
-        async $flow ==> $stream->streamOf(await $this->composeAsync($flow)),
-      ),
-    );
+  final protected async function renderAsync(
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
+  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+    return await $this->composeAsync($descendant_flow);
   }
 }

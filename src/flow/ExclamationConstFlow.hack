@@ -15,14 +15,15 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
 
   private function __construct(private dict<string, mixed> $data) {}
 
-  public static function createEmpty(): this {
-    return new static(dict[]);
+  public static function createEmpty(): SGMLStreamInterfaces\Chameleon<this> {
+    return
+      SGMLStreamInterfaces\cast_to_chameleon__DO_NOT_USE(new static(dict[]));
   }
 
   public static function createWithConstantsAndVariables(
     dict<string, mixed> $constants,
     dict<string, mixed> $variables,
-  ): this {
+  ): SGMLStreamInterfaces\Chameleon<this> {
     foreach ($constants as $c => $_) {
       invariant(
         $c[0] === '!',
@@ -37,7 +38,9 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
         $v,
       );
     }
-    return new static(Dict\merge($constants, $variables));
+    return SGMLStreamInterfaces\cast_to_chameleon__DO_NOT_USE(
+      new static(Dict\merge($constants, $variables)),
+    );
   }
 
   public function assignVariable(string $key, mixed $value): void {

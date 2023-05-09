@@ -6,40 +6,25 @@ use namespace HTL\SGMLStreamInterfaces;
 /**
  * @deprecated Kept for backwards compatibility with v0.x.
  *
- * Base class for tags that compose children without a need for `await`.
- * The children you compose can still be asynchronous. If you need to await
- * something at this level in the tree, see AsynchronousUserElement.
- *
- * You don't get write access to your Flow. If you need write access, see
- * SimpleUserElementWithWritableFlow.
- *
- * If you do not depend on the Flow at all and your element is pure, you can
- * look at DissolvableUserElement. This reduces the amount of wrapping objects
- * created and moves the processing in compose() to an earlier stage of the
- * rendering process. You should NOT do this if your processing is expensive
- * or depends on global state.
+ * Any `SimpleUserElement` can be expressed as a `SimpleElement`.
+ * Please consider using `SimpleElement` for new code.
  */
-abstract xhp class SimpleUserElement extends RootElement {
-  private bool $hasBeenStreamed = false;
+abstract xhp class SimpleUserElement extends SimpleElement {
+  use IgnoreSuccessorFlow;
 
   /**
    * Return your representation by composing something Streamable. You may not
    * call methods on the Flow after the method call completes.
    */
   abstract protected function compose(
-    SGMLStreamInterfaces\Flow $flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
   ): SGMLStreamInterfaces\Streamable;
 
   <<__Override>>
-  final public function placeIntoSnippetStream(
-    SGMLStreamInterfaces\SnippetStream $stream,
-  ): void {
-    if ($this->hasBeenStreamed) {
-      throw new _Private\UseAfterRenderException(static::class);
-    }
-    $this->hasBeenStreamed = true;
-    $stream->addSnippet(
-      new ComposableSnippet($flow ==> $stream->streamOf($this->compose($flow))),
-    );
+  final protected function render(
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
+  ): SGMLStreamInterfaces\Streamable {
+    return $this->compose($descendant_flow);
   }
 }

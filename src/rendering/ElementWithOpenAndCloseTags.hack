@@ -14,6 +14,7 @@ trait ElementWithOpenAndCloseTags {
 
   final public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
   ): void {
     if ($this->hasBeenStreamed) {
       throw new _Private\UseAfterRenderException(static::class);
@@ -27,7 +28,7 @@ trait ElementWithOpenAndCloseTags {
         $this->getDeclaredAttributes(),
       ),
     );
-    $this->placeMyChildrenIntoSnippetStream($stream);
+    $this->placeMyChildrenIntoSnippetStream($stream, $init_flow);
     $stream->addSafeSGML('</'.static::TAG_NAME.'>');
   }
 }

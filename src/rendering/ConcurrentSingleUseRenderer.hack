@@ -23,13 +23,16 @@ final class ConcurrentSingleUseRenderer
       'You may not use the same %s twice',
       static::class,
     );
+    $descendant_flow =
+      SGMLStreamInterfaces\cast_to_chameleon__DO_NOT_USE($flow);
+    $successor_flow = FirstComeFirstServedFlow::createEmpty();
     $this->hasRendered = true;
 
     $snippets = $this->stream->collect();
 
     $awaitables = vec[];
     foreach ($snippets as $snippet) {
-      $awaitables[] = $snippet->primeAsync($flow);
+      $awaitables[] = $snippet->primeAsync($descendant_flow);
     }
 
     concurrent {
@@ -41,7 +44,7 @@ final class ConcurrentSingleUseRenderer
            * feedBytesToConsumer operates on the awaitables from the race.
            * There are no false dependencies here.
            * We just MUST collect bytes in order. */
-          await $snippet->feedBytesToConsumerAsync($consumer);
+          await $snippet->feedBytesToConsumerAsync($consumer, $successor_flow);
         }
       };
     }

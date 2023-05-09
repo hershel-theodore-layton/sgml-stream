@@ -12,6 +12,6 @@ final class Chunk {
   }
 
   public function getSnippet(): SGMLStreamInterfaces\Snippet {
-    return $this->snippet ?? new SGMLStream\NullSnippet();
+    return $this->snippet ?? SGMLStream\NullSnippet::instance();
   }
 }

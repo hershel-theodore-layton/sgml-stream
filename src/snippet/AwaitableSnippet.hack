@@ -14,16 +14,20 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
     $awaitable;
 
   public function __construct(
+    private SGMLStreamInterfaces\CanProcessSuccessorFlow $processSuccessorFlow,
     private (function(
-      SGMLStreamInterfaces\CopyableFlow,
-    ): Awaitable<SGMLStreamInterfaces\SnippetStream>) $childFunc,
+      SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
+    ): Awaitable<(
+      SGMLStreamInterfaces\SnippetStream,
+      SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
+    )>) $childFunc,
   ) {}
 
   public async function primeAsync(
-    SGMLStreamInterfaces\CopyableFlow $flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow> $flow,
   ): Awaitable<void> {
     $this->awaitable = async {
-      $stream = await ($this->childFunc)($flow);
+      list($stream, $flow) = await ($this->childFunc)($flow);
       $snippets = $stream->collect();
 
       $awaitables = vec[];
@@ -40,6 +44,8 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
 
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
+    SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
+      $successor_flow,
   ): Awaitable<void> {
     $snippets_awaitable = async {
       if ($this->awaitable is null) {
@@ -57,12 +63,14 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
       $snippets = Asio\result($snippets_awaitable);
     }
 
+    $this->processSuccessorFlow->processSuccessorFlow($successor_flow);
+
     foreach ($snippets as $snippet) {
       /* HHAST_IGNORE_ERROR[DontAwaitInALoop]
        * All these awaitables were started in `primeAsync()`,
        * so no false dependencies are constructed.
        * We just MUST collect bytes in order. */
-      await $snippet->feedBytesToConsumerAsync($consumer);
+      await $snippet->feedBytesToConsumerAsync($consumer, $successor_flow);
     }
   }
 }

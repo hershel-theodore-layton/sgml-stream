@@ -19,11 +19,13 @@ final class SGMLSnippet implements SGMLStreamInterfaces\Snippet {
   public function __construct(private string $safeSGML) {}
 
   public async function primeAsync(
-    SGMLStreamInterfaces\Flow $_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_flow,
   ): Awaitable<void> {}
 
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
+    SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
+      $_successor_flow,
   ): Awaitable<void> {
     if ($this->safeSGML !== '') {
       await $consumer->consumeAsync($this->safeSGML);

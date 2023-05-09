@@ -36,9 +36,12 @@ final class ConcatenatingStream implements SGMLStreamInterfaces\SnippetStream {
     return $out;
   }
 
-  public function streamOf(SGMLStreamInterfaces\Streamable $element): this {
+  public function streamOf(
+    SGMLStreamInterfaces\Streamable $element,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
+  ): this {
     $me = new static();
-    $element->placeIntoSnippetStream($me);
+    $element->placeIntoSnippetStream($me, $init_flow);
     return $me;
   }
 }

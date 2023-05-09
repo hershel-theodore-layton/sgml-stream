@@ -41,7 +41,10 @@ abstract xhp class RootElement
    */
   public async function toHTMLStringAsync(): Awaitable<string> {
     $stream = new ConcatenatingStream();
-    $this->placeIntoSnippetStream($stream);
+    $this->placeIntoSnippetStream(
+      $stream,
+      FirstComeFirstServedFlow::createEmpty()
+    );
     $renderer = new ConcurrentSingleUseRenderer($stream);
     $consumer = new ToStringConsumer();
     $flow = FirstComeFirstServedFlow::createEmpty();
@@ -63,12 +66,13 @@ abstract xhp class RootElement
 
   final protected function placeMyChildrenIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
   ): void {
     foreach ($this->getChildren() as $child) {
       if ($child is SGMLStreamInterfaces\Streamable) {
-        $child->placeIntoSnippetStream($stream);
+        $child->placeIntoSnippetStream($stream, $init_flow);
       } else if ($child is Traversable<_>) {
-        self::placeTraversableIntoSnippetStream($stream, $child);
+        self::placeTraversableIntoSnippetStream($stream, $init_flow, $child);
       } else if ($child is SGMLStreamInterfaces\ToSGMLStringAsync) {
         $stream->addSnippet(new ToSGMLStringAsyncSnippet($child));
       } else /*if ($child is scalar) */ {
@@ -79,13 +83,14 @@ abstract xhp class RootElement
 
   final protected static function placeTraversableIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
     Traversable<mixed> $children,
   ): void {
     foreach ($children as $child) {
       if ($child is SGMLStreamInterfaces\Streamable) {
-        $child->placeIntoSnippetStream($stream);
+        $child->placeIntoSnippetStream($stream, $init_flow);
       } else if ($child is Traversable<_>) {
-        self::placeTraversableIntoSnippetStream($stream, $child);
+        self::placeTraversableIntoSnippetStream($stream, $init_flow, $child);
       } else if ($child is SGMLStreamInterfaces\ToSGMLStringAsync) {
         $stream->addSnippet(new ToSGMLStringAsyncSnippet($child));
       } else if ($child is null) {

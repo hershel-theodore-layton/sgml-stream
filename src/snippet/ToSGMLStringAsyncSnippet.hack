@@ -20,7 +20,7 @@ final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
   ) {}
 
   public async function primeAsync(
-    SGMLStreamInterfaces\CopyableFlow $_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow> $_flow,
   ): Awaitable<void> {
     try {
       $this->stringAwaitable = $this->toSGMLStringAsync->toHTMLStringAsync();
@@ -32,6 +32,8 @@ final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
 
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
+    SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
+      $_successor_flow,
   ): Awaitable<void> {
     $string_awaitable = $this->stringAwaitable;
     if ($string_awaitable is null) {

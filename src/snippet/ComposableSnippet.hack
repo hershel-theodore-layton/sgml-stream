@@ -11,16 +11,21 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
   private ?\Throwable $caughtThrowable;
 
   public function __construct(
+    private SGMLStreamInterfaces\CanProcessSuccessorFlow $processSuccessorFlow,
     private (function(
-      SGMLStreamInterfaces\CopyableFlow,
-    ): SGMLStreamInterfaces\SnippetStream) $childFunc,
+      SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
+    ): (
+      SGMLStreamInterfaces\SnippetStream,
+      SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
+    )) $childFunc,
   ) {}
 
   public async function primeAsync(
-    SGMLStreamInterfaces\CopyableFlow $flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow> $flow,
   ): Awaitable<void> {
     try {
-      $this->snippets = ($this->childFunc)($flow)->collect();
+      list($stream, $flow) = ($this->childFunc)($flow);
+      $this->snippets = $stream->collect();
     } catch (\Throwable $t) {
       $this->caughtThrowable = $t;
       return;
@@ -36,18 +41,23 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
 
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
+    SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
+      $successor_flow,
   ): Awaitable<void> {
     if ($this->snippets is null) {
       throw $this->caughtThrowable ??
         new _Private\SnippetNotPrimedException(static::class);
     }
+    $snippets = $this->snippets;
 
-    foreach ($this->snippets as $snippet) {
+    $this->processSuccessorFlow->processSuccessorFlow($successor_flow);
+
+    foreach ($snippets as $snippet) {
       /* HHAST_IGNORE_ERROR[DontAwaitInALoop]
        * All these awaitables were started in `primeAsync()`,
        * so no false dependencies are constructed.
        * We just MUST collect bytes in order. */
-      await $snippet->feedBytesToConsumerAsync($consumer);
+      await $snippet->feedBytesToConsumerAsync($consumer, $successor_flow);
     }
   }
 }

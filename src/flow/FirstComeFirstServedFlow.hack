@@ -19,20 +19,24 @@ final class FirstComeFirstServedFlow
     private dict<string, mixed> $variables,
   ) {}
 
-  public static function createEmpty(): this {
-    return new static(dict[], dict[]);
+  public static function createEmpty(): SGMLStreamInterfaces\Chameleon<this> {
+    return SGMLStreamInterfaces\cast_to_chameleon__DO_NOT_USE(
+      new static(dict[], dict[]),
+    );
   }
 
   public static function createWithConstantsAndVariables(
     dict<string, mixed> $constants,
     dict<string, mixed> $variables,
-  ): this {
+  ): SGMLStreamInterfaces\Chameleon<this> {
     foreach ($variables as $v => $_) {
       if (C\contains_key($constants, $v)) {
         throw new _Private\RedeclaredConstantException($v, 'variable');
       }
     }
-    return new static($constants, $variables);
+    return SGMLStreamInterfaces\cast_to_chameleon__DO_NOT_USE(
+      new static($constants, $variables),
+    );
   }
 
   public function assignVariable(string $key, mixed $value): void {

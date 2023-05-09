@@ -6,33 +6,10 @@ use namespace HTL\SGMLStreamInterfaces;
 /**
  * @deprecated Kept for backwards compatibility with v0.x.
  *
- * Base class for elements which wrap another Streamable.
- * This is the leanest type of Element there is. It dissolves immediately when
- * being added to a stream instead of using a Snippet which dissolves later in
- * the pipeline. This is useful for small pure elements with really cheap
- * compose methods.
- *
- * This is especially useful if you want to add a `padding` attribute to `div`
- * or automate the creation of `<picture>` elements for webp and avif images.
- *
- * A note about exceptions:
- * If your compose() throws, it will bubble up in the ->placeIntoSnippetStream()
- * stage, instead of the ->primeAsync() or ->feedBytesToConsumerAsync() stages.
- *
- * A note for people optimizing their xhp trees:
- * This is especially useful when wrapping elements that render to a string.
- * Given this xhp expression `<div><span></span></div>` a ConcatenatingStream
- * will append: "<div", ">", "<span", ">", "</span>", "</div>" to the same string
- * without any overhead. If we used a SimpleUserElement wrapping a span, more
- * overhead would be incurred. `<div><MySpan></MySpan></div>` would append like
- * so: "<div", ">", end string, Snippet-For-MySpan, new string, "</div>".
- * The Snippet-For-MySpan broke up this string, causing more tiny strings and
- * tiny Snippet objects to float around in your program. If MySpan was a
- * dissolvable element instead, the inner xhp expression `<span></span>` would
- * be appended to the stream, instead of the wrapping ComposableSnippet. This
- * results in longer strings and fewer objects inside of the ConcatenatingStream.
+ * Any `DissolvableUserElement` can be expressed as a `DissolvableElement`.
+ * Please consider using `DissolvableElement` for new code.
  */
-abstract xhp class DissolvableUserElement extends RootElement {
+abstract xhp class DissolvableUserElement extends DissolvableElement {
   /**
    * Return your representation by composing something Streamable.
    * Do it quickly, as this work happens before the async machine is started.
@@ -40,9 +17,9 @@ abstract xhp class DissolvableUserElement extends RootElement {
   abstract protected function compose(): SGMLStreamInterfaces\Streamable;
 
   <<__Override>>
-  final public function placeIntoSnippetStream(
-    SGMLStreamInterfaces\SnippetStream $stream,
-  ): void {
-    $this->compose()->placeIntoSnippetStream($stream);
+  final protected function render(
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_flow,
+  ): SGMLStreamInterfaces\Streamable {
+    return $this->compose();
   }
 }
