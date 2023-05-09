@@ -4,6 +4,8 @@ namespace HTL\SGMLStream;
 use namespace HTL\SGMLStreamInterfaces;
 
 /**
+ * @deprecated Kept for backwards compatibility with v0.x.
+ *
  * Base class for tags that must await something first, before composing
  * children. If you don't need to await something, use SimpleUserElement.
  * AsynchronousUserElement comes with an extra runtime cost. It checks if your

@@ -4,6 +4,8 @@ namespace HTL\SGMLStream;
 use namespace HTL\SGMLStreamInterfaces;
 
 /**
+ * @deprecated Kept for backwards compatibility with v0.x.
+ *
  * Base class for elements which wrap another Streamable.
  * This is the leanest type of Element there is. It dissolves immediately when
  * being added to a stream instead of using a Snippet which dissolves later in
