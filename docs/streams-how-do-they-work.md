@@ -10,6 +10,8 @@ Streaming happens in three phases:
 
 I'll explain this twice, once for a tree without `UserElement`s, and once for a tree with `UserElement`s
 
+_UserElement used to be part of the classname of every user extendable class in this library. This convention has since been dropped. The XXXUserElement classes are deprecated and only present for backwards compatibility. In this document UserElement refers to any class which renders through a Snippet. (Notable exception, DissolvableElement does not use a Snippet.)_
+
 ## Constructing a SnippetStream from a tree without UserElements
 
 When serializing an sgml tree to a network or a string, the first step is determining the order in which parts of the tree should appear in the text representation. This requires [traversing the tree](https://en.wikipedia.org/wiki/Tree_traversal). Sgml-stream represents this concept using a `SnippetStream`. Each visited entity in the tree creates one or more `Snippet`s. These snippets are appended to the stream. Once the entire tree has been traversed, you are left with a (long) vec of `Snippet`s. It is crucial that they appear in document order.
@@ -68,7 +70,7 @@ Let's convert this representation into a `SnippetStream`.
 
 ## Priming the SnippetStream without UserElements
 
-In the next step, we hand this `SnippetStream` to a `Renderer`. The `Renderer` requires a `Flow`. When converting a tree to a `SnippetStream`, we didn't have a `Flow` yet. The `Renderer` collects the `Snippet`s from the `SnippetStream`. It then calls `->primeAsync(CopyableFlow $flow): Awaitable<void>` on each of them and stores the Awaitables. Each `Snippet` will now fire of all the work it needed to do. Since the `SnippetStream` we just created doesn't need to do any work, this step is a noop.
+In the next step, we hand this `SnippetStream` to a `Renderer`. The `Renderer` requires a `Flow`. This `Flow` is used as the `Descendant<Flow>` When converting a tree to a `SnippetStream`, we didn't have a `Descendant<Flow>` yet. We only has the `Init<Flow>`. The `Renderer` collects the `Snippet`s from the `SnippetStream`. It then calls `->primeAsync(Descendant<CopyableFlow> $flow): Awaitable<void>` on each of them and stores the Awaitables. Each `Snippet` will now fire of all the work it needed to do. Since the `SnippetStream` we just created doesn't need to do any work, this step is a noop.
 
 ## Consuming the primed SnippetStream without UserElements
 
@@ -120,25 +122,25 @@ And also the JSON view:
 ]
 ```
 
-`MyElement` is a `SimpleUserElement` and `MyOtherElement` is an `AsynchronousUserElement`. When constructing a `SnippetStream` from this subtree, we might not make as many `Snippet`s as you might expect, but that is fine. They will be made later when needed.
+`MyElement` is a `SimpleElement` and `MyOtherElement` is an `AsynchronousElement`. When constructing a `SnippetStream` from this subtree, we might not make as many `Snippet`s as you might expect, but that is fine. They will be made later when needed.
 
-`div` is the top level element. Just like before, a new Snippet with the value `<div>` is created. Then the children of `div` get their turn. `MyElement` is not a plain SGML element. In order to compose, it needs a `Flow`, which is not yet available at this step. If `MyElement` is a `SimpleUserElement`, a snippet with the value `ComposableSnippet($flow ==> $stream->streamOf($this->compose($flow)))` is created. We don't recurse down into the children of `MyElement`, since `MyElement` may decide to ignore its children. If it does, why spend any time on them? This means that we return control back to `div`, since their are no siblings of `MyElement`. `div` adds a Snippet with the value `</div>` and we are done. We are left with the following SnippetStream.
+`div` is the top level element. Just like before, a new Snippet with the value `<div>` is created. Then the children of `div` get their turn. `MyElement` is not a plain SGML element. In order to render, it needs a `Flow`, which is not yet available at this step. If `MyElement` is a `SimpleElement`, a snippet with the value `ComposableSnippet($this, $descendant_flow ==> tuple($stream->streamOf($this->render($descendant_flow, $init_flow), $init_flow), $descendant_flow))` is created. We don't recurse down into the children of `MyElement`, since `MyElement` may decide to ignore its children. If it does, why spend any time on them? This means that we return control back to `div`, since their are no siblings of `MyElement`. `div` adds a Snippet with the value `</div>` and we are done. We are left with the following SnippetStream.
 
 ```JSON
-["<div>", "ComposableSnippet of SimpleUserElement", "</div>"]
+["<div>", "ComposableSnippet of SimpleElement", "</div>"]
 ```
 
 ## Priming a SnippetStream with UserElements
 
-In the next step, the Renderer gets a go. The renderer _has_ a `Flow` available. This was not present in the previous step. After collecting the 3 `Snippet`s from the `SnippetStream`, we prime all the `Snippet`s. `<div>` and `</div>` don't need to be primed, therefore these calls are just a noop. The `ComposableSnippet` _does_ do some work when being primed. Namely, it runs `SimpleUserElement->compose($flow)`, with the `Flow` the `Renderer` gave it. `->compose()` is not `async`, so it runs greedily. When `->compose()` returns a `Streamable`, the `ComposableSnippet` knows how the `SimpleUserElement` wants to be rendered. It takes returned `Streamable`, and converts this into a new `SnippetStream`. Let's say for the sake of example, that `MyElement` has this definition.
+In the next step, the Renderer gets a go. The renderer _has_ a `Descendant<Flow>` available. This was not present in the previous step. After collecting the 3 `Snippet`s from the `SnippetStream`, we prime all the `Snippet`s. `<div>` and `</div>` don't need to be primed, therefore these calls are just a noop. The `ComposableSnippet` _does_ do some work when being primed. Namely, it runs `SimpleElement->render($descendant_flow, $init_flow)`, with the `Descendant<Flow>` the `Renderer` gave it. `->render()` is not `async`, so it runs greedily. When `->render()` returns a `Streamable`, the `ComposableSnippet` knows how the `SimpleElement` wants to be rendered. It takes returned `Streamable`, and converts this into a new `SnippetStream`. Let's say for the sake of example, that `MyElement` has this definition.
 
 ```PHP
-final xhp class MyElement extends SimpleUserElement {
+final xhp class MyElement extends SimpleElement {
   <<__Override>>
-  protected function compose(Flow $flow): Streamable {
-      return <div class={$flow->getx('dark-theme') ? "night" : "bright"}>
-        {$this->getChildren()}
-      </div>;
+  protected function render(Descendant<Flow> $descendant_flow, Init<Flow> $_init_flow): Streamable {
+    return <div class={$descendant_flow->getx('dark-theme') ? "night" : "bright"}>
+      {$this->getChildren()}
+    </div>;
   }
 }
 ```
@@ -180,12 +182,12 @@ This gets turned into a `SnippetStream` again. I'll skip the prose and show you 
 ```JSON
 [
   "<div class=\"night\">", "<span>",
-  "AwaitableSnippet of AsynchronousUserElement",
+  "AwaitableSnippet of AsynchronousElement",
   "</span>", "</div>"
 ]
 ```
 
-These `Snippet`s are looped over and their `->primeAsync()` method gets invoked from within the `->primeAsync()` call on `ComposableSnippet`. The SGML ones are once again noop methods. The `AwaitableSnippet->primeAsync(CopyableFlow $flow): Awaitable<void>` method invokes `->composeAsync(Flow $flow): Awaitable<Streamable>` on the `AsynchronousUserElement`. Let's assume that fetches some response from an API. When we `await` all these Awaitables concurrently, `ComposableSnippet->primeAsync()` returns back to the `Renderer`. The `Renderer` does not yet `await` these Awaitables. They are awaited in the next step. The Awaitables have formed the following dependency graph.
+These `Snippet`s are looped over and their `->primeAsync()` method gets invoked from within the `->primeAsync()` call on `ComposableSnippet`. The SGML ones are once again noop methods. The `AwaitableSnippet->primeAsync(Descendant<CopyableFlow> $flow): Awaitable<void>` method invokes `->renderAsync(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>` on the `AsynchronousElement`. Let's assume that fetches some response from an API. When we `await` all these Awaitables concurrently, `ComposableSnippet->primeAsync()` returns back to the `Renderer`. The `Renderer` does not yet `await` these Awaitables. They are awaited in the next step. The Awaitables have formed the following dependency graph.
 
 ```JSON
 [
@@ -206,7 +208,7 @@ These `Snippet`s are looped over and their `->primeAsync()` method gets invoked 
       },
       {
         "snippet": "AwaitableSnippet",
-        "depends on": "MyOtherElement->composeAsync()"
+        "depends on": "MyOtherElement->renderAsync()"
       },
       {
         "snippet": "</span>",
@@ -225,7 +227,7 @@ These `Snippet`s are looped over and their `->primeAsync()` method gets invoked 
 ]
 ```
 
-When `MyOtherElement->composeAsync()`'s Awaitable resolves, `AwaitableSnippet` would create another `SnippetStream` for the `Streamable` returned from there. This `Streamable` could be a `AwaitableSnippet` again. Then the same course of events would take place. At some point however, the inner `Snippet` returns something that does not yield yet more snippets. At which point, no new `Snippet`s are being created.
+When `MyOtherElement->renderAsync()`'s Awaitable resolves, `AwaitableSnippet` would create another `SnippetStream` for the `Streamable` returned from there. This `Streamable` could be a `AwaitableSnippet` again. Then the same course of events would take place. At some point however, the inner `Snippet` returns something that does not yield yet more snippets. At which point, no new `Snippet`s are being created.
 
 ## Consuming a SnippetStream with UserElements
 
@@ -237,10 +239,10 @@ We then `await` the 3 top level `Awaitable`s from the top level `->primeAsync()`
 
 `AwaitableSnippet` decides to notify the `Consumer` that the next bit of content is stuck behind `await`ing something using `Consumer->receiveWaitNotificationAsync()`. The `Consumer` _might_ use this down time to flush some buffer to the network. It might also return immediately, depending on what _you_ want it to do. If the API response comes back whilst the `Consumer`s Awaitable is not resolved yet, we **can not** continue. The contract of `Consumer` does not require correct behavior when two methods are called on it at the same time. This means that you should be careful about the work you decide to do in this notification method. You could end up stalling the `Renderer`.
 
-The API response is back and the `Consumer` is also done. Let's create a `SnippetStream` from the result of `->composeAsync()` quickly. We consume this stream and the `Awaitable` from `AwaitableSnippet->feedBytesToConsumer()` resolves. `ComposableSnippet` was waiting for that. It then feeds the remaining `</span>` and `</div>` to the `Consumer`. When that completes, its own returned `Awaitable` resolves. The `Renderer` can finally move on to the last `</div>` and call `Consumer->theDocumentIsCompleteAsync()`. The document is complete and the `Renderer` returns from `Renderer->renderAsync()`.
+The API response is back and the `Consumer` is also done. Let's create a `SnippetStream` from the result of `->renderAsync()` quickly. We consume this stream and the `Awaitable` from `AwaitableSnippet->feedBytesToConsumer()` resolves. `ComposableSnippet` was waiting for that. It then feeds the remaining `</span>` and `</div>` to the `Consumer`. When that completes, its own returned `Awaitable` resolves. The `Renderer` can finally move on to the last `</div>` and call `Consumer->theDocumentIsCompleteAsync()`. The document is complete and the `Renderer` returns from `Renderer->renderAsync()`.
 
 ## Multiple async operations in one tree
 
-The previous example only had a single `AsynchronousUserElement`. Real world webpages will have way more `AsynchronousUserElement`s in them. Keep in mind that an element which is nested inside of another like this `<A><B></B></A>` does not get primed before the outer element resolves. If there is no data dependency between `A` and `B`, your tree will have fewer `Awaitable`s running at once which reduces the amount of work done concurrently. If you have a choice between nesting `A` in `B` or making them siblings, prefer siblings. That way, both `A` and `B` can `await` at the same time.
+The previous example only had a single `AsynchronousElement`. Real world webpages will have way more `AsynchronousElement`s in them. Keep in mind that an element which is nested inside of another like this `<A><B></B></A>` does not get primed before the outer element resolves. If there is no data dependency between `A` and `B`, your tree will have fewer `Awaitable`s running at once which reduces the amount of work done concurrently. If you have a choice between nesting `A` in `B` or making them siblings, prefer siblings. That way, both `A` and `B` can `await` at the same time.
 
-If you have multiple `AsynchronousUserElement`s in your tree, `->primeAsync()` may resolve in any order. We run as many `Awaitable`s as we can at the same time. If an `Awaitable` at the end of the tree resolves before one at the beginning, its return value will get turned into a `SnippetStream` first. It will get primed immediately afterwards. The only process which does always happen in order is `->feedBytesToConsumerAsync()`.
+If you have multiple `AsynchronousElement`s in your tree, `->primeAsync()` may resolve in any order. We run as many `Awaitable`s as we can at the same time. If an `Awaitable` at the end of the tree resolves before one at the beginning, its return value will get turned into a `SnippetStream` first. It will get primed immediately afterwards. The only process which does always happen in order is `->feedBytesToConsumerAsync()`.

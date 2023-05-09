@@ -10,6 +10,10 @@ This library is an alternative for [xhp-lib](https://github.com/facebook/xhp-lib
 
 You **MUST** enable the `.hhconfig` setting `check_xhp_attribute` when using sgml-stream. We don't validate `@required` at runtime when you access an attribute. We trust that the typechecker has made sure all required attributes are present. Xhp-lib does validate `@required` at runtime. If you do not turn this setting on, your `@required` attributes might be `null` when read, which is not typesafe.
 
+## Upgrading
+
+If you are reading this, v1.0 has been released. See the [upgrading guide](./docs/upgrading-from-v0-to-v1.md).
+
 ## Feature differences between xhp-lib and sgml-stream
 
 ### Rendering model
@@ -35,9 +39,11 @@ When rendering this tree with xhp-lib, all Awaitables fire at once. Once all the
 
 Xhp-lib has a concept called `contexts`. It is essentially a `dict<string, mixed>` which is managed by xhp-lib and available to you when `element->renderAsync()` is called. You can call `->getContext()` and `->setContext()` to store values and retrieve them later. Sgml-stream does not implement contexts. Contexts were to difficult to get right when after we changed the rendering model.
 
-Sgml-stream addresses this need in a different way. When your `SimpleUserElement->compose(Flow $flow): Streamable` method is called, you get access to a Flow. Flows support both constants and variables. The constant rules are relatively simple to explain. For a full explainer on Flow, including variables in flows, how variables and constants interact, and much more, see [The intricacies of Flow](./docs/the-intricacies-of-flow.md).
+Sgml-stream addresses this need in a different way. When your `SimpleElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Streamable` method is called, you get access to two Flows. The `$descendant_flow` is meant to fill the same role as xhp-lib's contexts. The `$init_flow` (and also the unmentioned `$successor_flow`) have no equivalents in xhp-lib. For a historical note about flows, [click here](#flows-in-version-zero). The flows explained in this readme are of the `Descendant<Flow>` kind. See [Flow kinds](./docs/flow-kinds.md)
 
-A Flow is a representation of your scope. Your scope is a single element large. If an element has descendants, their scopes are sub scopes. They can read your constants, but you can't read theirs. A constant can be declared with `WritableFlow->declareConstant(string $name, mixed $value): void`. If this declaration succeeds, it will declare the constant with `$name` for your scope. If it fails, a `RedeclaredConstantException` is thrown and the value remains unchanged. You can read constants from your flow using `Flow->get(string $name): mixed` and `Flow->getx(string $name): mixed`. The method with the `x` suffix throws a `ValueNotPresentException` when the Flow doesn't know about `$name`. `->get()` will return `null` when in this case. You can also query for the presence of `$name` using `Flow->has(string $name): bool`.
+Flows support both constants and variables. The constant rules are relatively simple to explain. For a full explainer on Flow, including variables in flows, how variables and constants interact, and much more, see [Flow in depth](./docs/flow-in-depth.md).
+
+A (descendant) Flow is a representation of your scope. Your scope is a single element large. If an element has descendants, their scopes are sub scopes. They can read your constants, but you can't read theirs. A constant can be declared with `WritableFlow->declareConstant(string $name, mixed $value): void`. If this declaration succeeds, it will declare the constant with `$name` for your scope. If it fails, a `RedeclaredConstantException` is thrown and the value remains unchanged. You can read constants from your flow using `Flow->get(string $name): mixed` and `Flow->getx(string $name): mixed`. The method with the `x` suffix throws a `ValueNotPresentException` when the Flow doesn't know about `$name`. `->get()` will return `null` when in this case. You can also query for the presence of `$name` using `Flow->has(string $name): bool`.
 
 Let's illustrate with an example:
 
@@ -117,14 +123,14 @@ final xhp class frag extends RootElement implements FragElement {
 }
 ```
 
-As you can see from these examples, you get access to a **dangerous** method on SnippetStream, namely `->addSafeSGML(string $sgml): void`. You probably don't want to write your own elements this way if you can compose yourself using other tags. Extending `RootElement` directly is wordy and encourages unsafe strings to be passed to `->addSafeSGML()`. Most of the time, you should be using something else. This library includes base classes to hide the SnippetStream from you. `DissolvableUserElement`, `SimpleUserElement`, `SimpleUserElementWithWritableFlow`, `AsynchronousUserElement`, and `AsynchronousUserElementWithWritableFlow`. For a guide on how to choose between them, see [What element type do I need?](./docs/what-element-type-do-i-need.md) You can write your own too, since we haven't `<<__Sealed>>` `RootElement` off. If you decide to use a built-in base class, you'll implement a method with one of these signatures:
- - `DissolvableUserElement->compose(): Streamable`
- - `SimpleUserElement->compose(Flow $flow): Streamable`
- - `SimpleUserElementWithWritableFlow->compose(WritableFlow $flow): Streamable`
- - `AsynchronousUserElement->composeAsync(Flow $flow): Awaitable<Streamable>`
- - `AsynchronousUserElementWithWritableFlow->composeAsync(WritableFlow $flow): Awaitable<Streamable>`
+As you can see from these examples, you get access to a **dangerous** method on SnippetStream, namely `->addSafeSGML(string $sgml): void`. You probably don't want to write your own elements this way if you can compose yourself using other tags. Extending `RootElement` directly is wordy and encourages unsafe strings to be passed to `->addSafeSGML()`. Most of the time, you should be using something else. This library includes base classes to hide the SnippetStream from you. `DissolvableElement`, `SimpleElement`, `SimpleElementWithWritableFlow`, `AsynchronousElement`, and `AsynchronousElementWithWritableFlow`. For a guide on how to choose between them, see [What element type do I need?](./docs/what-element-type-do-i-need.md) You can write your own too, since we haven't `<<__Sealed>>` `RootElement` off. If you decide to use a built-in base class, you'll implement a method with one of these signatures:
+ - `DissolvableElement->render(Init<Flow> $flow): Streamable`
+ - `SimpleElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Streamable`
+ - `SimpleElementWithWritableFlow->render(Descendant<WritableFlow> $descendant_flow, Init<Flow> $init_flow): Streamable`
+ - `AsynchronousElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
+ - `AsynchronousElementWithWritableFlow->render(Descendant<WritableFlow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
 
-The `Flow` is yours for as long as your Hack scope lasts. Either via `return` or `throw`. If you are `async`, the `Flow` stays yours until your Awaitable resolves. Don't try to hold on to a Flow after that. If we implement more optimizations in the future, we will not consider it a BC break if your code behaves differently if you keep the `Flow` around.
+The `Flow`s are yours for as long as your Hack scope lasts. Either via `return` or `throw`. If you are `async`, the `Flow`s stay yours until your Awaitable resolves. Don't try to hold on to a Flows after that. If we implement more optimizations in the future, we will not consider it a BC break if your code behaves differently if you keep the `Flow`s around.
 
 You return a `Streamable` from these methods. This will be an `Element` in most cases, but all other `Streamable`s are also valid. So you can construct a markdown renderer, and return that. As long as you implement the `Streamable` interface on your markdown renderer, sgml-stream will understand what to do.
 
@@ -136,3 +142,9 @@ Answer: Strings can not implement interfaces that are not in hhvm already (`XHPC
 A common response: No, I want to stream the string, without escaping it. Please don't mess with my strings.
 
 Sigh...: There is a way to get what you want, but be careful what you wish for. The interface `ToSGMLStringAsync` is the thing you are looking for. This interface is an escape hatch which introduces security risks which might come back to bite you. This interface bypasses all parts of sgml-stream that try to keep you safe. It streams your string **directly with no escaping applied** to your consumer. This interface is meant to be used very sparingly.
+
+## Flows in version zero
+
+_Historical note_
+
+For the longest time, when this library had version v0.x, there was only one `Flow` kind. This `Flow` has been renamed to `Descendant<Flow>` and is handed from ancestor to decendant. Since the release of `v1.0`, there are three types of flows. `Descendant<Flow>`, `Init<Flow>`, and `Successor<Flow>`. If you see a mention of `Flow` without a specific type, it is likely to be a `Descendant<Flow>`.

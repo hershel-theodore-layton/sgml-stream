@@ -8,7 +8,8 @@ _This documentation is written for those who have a general understanding of xhp
 
 ## Concepts
 
- - [The intricacies of Flow](./the-intricacies-of-flow.md)
+ - [Flow in depth](./flow-in-depth.md)
+ - [Flow kinds](./docs/flow-kinds.md)
 
 ## Peaking under the hood
 
