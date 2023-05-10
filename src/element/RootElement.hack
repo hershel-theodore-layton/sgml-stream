@@ -40,15 +40,16 @@ abstract xhp class RootElement
    * implementations of SnippetStream, Renderer, Consumer, and Flow.
    */
   public async function toHTMLStringAsync(): Awaitable<string> {
-    $stream = new ConcatenatingStream();
-    $this->placeIntoSnippetStream(
-      $stream,
-      FirstComeFirstServedFlow::createEmpty()
-    );
-    $renderer = new ConcurrentSingleUseRenderer($stream);
+    $renderer = new ConcurrentReusableRenderer();
     $consumer = new ToStringConsumer();
-    $flow = FirstComeFirstServedFlow::createEmpty();
-    await $renderer->renderAsync($consumer, $flow);
+    await $renderer->renderAsync(
+      new ConcatenatingStream(),
+      $this,
+      $consumer,
+      FirstComeFirstServedFlow::createEmpty(),
+      FirstComeFirstServedFlow::createEmpty(),
+      FirstComeFirstServedFlow::createEmpty(),
+    );
     return $consumer->toString();
   }
 
