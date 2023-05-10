@@ -4,7 +4,7 @@ namespace HTL\SGMLStream;
 use namespace HTL\SGMLStreamInterfaces;
 
 /**
- * This renderer may only be used once.
+ * @deprecated Use `ConcurrentReusableRenderer` instead.
  */
 final class ConcurrentSingleUseRenderer
   implements SGMLStreamInterfaces\Renderer {
