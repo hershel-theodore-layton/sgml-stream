@@ -32,7 +32,7 @@ final class SuccessorFlowTest extends HackTest {
 
     // We did indeed stall some time for the following Immediates.
     expect($successor_flow->getx('Asio\\usleep(42)') as int)->toBeGreaterThan(
-      41_000,
+      41000,
     );
 
     $successor_flow->assignVariable('a', 'b');
@@ -122,7 +122,8 @@ final class Slow extends SGMLStream\AsynchronousElement {
 
   <<__Override>>
   protected async function renderAsync(
-    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_descendant_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
+      $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable> {
     $start = clock_gettime_ns(CLOCK_MONOTONIC);
