@@ -25,7 +25,7 @@ final class SuccessorFlowTest extends HackTest {
         <Immediate number={6}><Immediate number={7}></Immediate></Immediate>
       </Immediate>;
 
-    $result = await static::renderAsync($streamable, $successor_flow);
+    await static::renderAsync($streamable, $successor_flow);
 
     expect($successor_flow->getx('!mutable_vec') as MutableVecOfInt->value)
       ->toEqual(Vec\range(1, 7));
@@ -93,6 +93,7 @@ final class SuccessorFlowTest extends HackTest {
 final class Immediate extends SGMLStream\SimpleElement {
   attribute int number @required;
 
+  <<__Override>>
   public function processSuccessorFlow(
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow> $flow,
   ): void {
@@ -121,8 +122,8 @@ final class Slow extends SGMLStream\AsynchronousElement {
 
   <<__Override>>
   protected async function renderAsync(
-    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
-    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_descendant_flow,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable> {
     $start = clock_gettime_ns(CLOCK_MONOTONIC);
     await Asio\usleep(42);

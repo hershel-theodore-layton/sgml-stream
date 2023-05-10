@@ -23,7 +23,7 @@ abstract xhp class RootElement
   final public function __construct(
     KeyedTraversable<string, mixed> $attributes,
     Traversable<?XHPChild> $children,
-    dynamic ...$debug_info
+    dynamic ...$_debug_info
   ) {
     $this->initializeAttributes($attributes);
     $this->appendXHPChildren($children);

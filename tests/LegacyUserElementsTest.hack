@@ -32,7 +32,7 @@ final class S extends SGMLStream\SimpleUserElement {
   }
   <<__Override>>
   protected function compose(
-    SGMLStreamInterfaces\Flow $flow,
+    SGMLStreamInterfaces\Flow $_flow,
   ): SGMLStreamInterfaces\Streamable {
     invariant($this->initCalled, 'init not called');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
@@ -63,7 +63,7 @@ final class A extends SGMLStream\AsynchronousUserElement {
   }
   <<__Override>>
   protected async function composeAsync(
-    SGMLStreamInterfaces\Flow $flow,
+    SGMLStreamInterfaces\Flow $_flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable> {
     invariant($this->initCalled, 'init not called');
     return <element data-class={static::class}>{$this->getChildren()}</element>;

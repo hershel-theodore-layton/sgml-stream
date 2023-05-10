@@ -3,7 +3,6 @@ namespace HTL\SGMLStream\Tests;
 
 use function Facebook\FBExpect\expect;
 use type Facebook\HackTest\HackTest;
-use namespace HTL\SGMLStream;
 
 final class BugsInElementWithOpenAndCloseTagsAndUnescapedContentTest
   extends HackTest {
