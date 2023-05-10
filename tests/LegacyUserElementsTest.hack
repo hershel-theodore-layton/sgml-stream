@@ -20,7 +20,26 @@ final class LegacyUserElementsTest extends HackTest {
       ' AW(AW wrote this) SW(SW wrote this) '.
       '</element></element></element></element></element></element>';
 
-    expect(await $tree->toHTMLStringAsync())->toEqual($expected);
+    expect(await static::renderAsync($tree))->toEqual($expected);
+  }
+
+  private static async function renderAsync(
+    SGMLStreamInterfaces\Streamable $streamable,
+  ): Awaitable<string> {
+    $stream = new SGMLStream\ConcatenatingStream();
+
+    $streamable->placeIntoSnippetStream(
+      $stream,
+      SGMLStream\FirstComeFirstServedFlow::createEmpty(),
+    );
+
+    $renderer = new SGMLStream\ConcurrentSingleUseRenderer($stream);
+    $consumer = new SGMLStream\ToStringConsumer();
+    await $renderer->renderAsync(
+      $consumer,
+      SGMLStream\FirstComeFirstServedFlow::createEmpty(),
+    );
+    return $consumer->toString();
   }
 }
 
