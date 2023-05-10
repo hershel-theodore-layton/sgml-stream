@@ -5,12 +5,6 @@ use function Facebook\FBExpect\expect;
 use type Facebook\HackTest\HackTest;
 use namespace HTL\SGMLStream;
 
-final xhp class rawtext extends SGMLStream\RootElement {
-  const string TAG_NAME = 'rawtext';
-
-  use SGMLStream\ElementWithOpenAndCloseTagsAndUnescapedContent;
-}
-
 final class BugsInElementWithOpenAndCloseTagsAndUnescapedContentTest
   extends HackTest {
   public function test_incomplete_closing_tags_in_content_throw(): void {

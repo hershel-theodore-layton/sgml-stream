@@ -6,10 +6,22 @@ use function Facebook\FBExpect\expect;
 
 use type Facebook\HackTest\HackTest;
 
-final class element extends SGMLStream\RootElement {
-  use SGMLStream\ElementWithOpenAndCloseTags;
+final class LegacyUserElementsTest extends HackTest {
+  public async function testLegacyElementsAreBackwardsCompatible(
+  ): Awaitable<void> {
+    $tree = <A><S><AW><SW><D><DumpFlow /></D></SW></AW></S></A>;
 
-  const string TAG_NAME = 'element';
+    $expected = '<element data-class="HTL\SGMLStream\Tests\A">'.
+      '<element data-class="HTL\SGMLStream\Tests\S">'.
+      '<element data-class="HTL\SGMLStream\Tests\AW">'.
+      '<element data-class="HTL\SGMLStream\Tests\SW">'.
+      '<element data-class="HTL\SGMLStream\Tests\D">'.
+      '<element data-class="HTL\SGMLStream\Tests\DumpFlow">'.
+      ' AW(AW wrote this) SW(SW wrote this) '.
+      '</element></element></element></element></element></element>';
+
+    expect(await $tree->toHTMLStringAsync())->toEqual($expected);
+  }
 }
 
 final class S extends SGMLStream\SimpleUserElement {
@@ -97,23 +109,5 @@ final class DumpFlow extends SGMLStream\SimpleUserElement {
         AW({$flow->get(AW::class) as ?\XHPChild})
         SW({$flow->get(SW::class) as ?\XHPChild})
       </element>;
-  }
-}
-
-final class LegacyUserElementsTest extends HackTest {
-  public async function testLegacyElementsAreBackwardsCompatible(
-  ): Awaitable<void> {
-    $tree = <A><S><AW><SW><D><DumpFlow /></D></SW></AW></S></A>;
-
-    $expected = '<element data-class="HTL\SGMLStream\Tests\A">'.
-      '<element data-class="HTL\SGMLStream\Tests\S">'.
-      '<element data-class="HTL\SGMLStream\Tests\AW">'.
-      '<element data-class="HTL\SGMLStream\Tests\SW">'.
-      '<element data-class="HTL\SGMLStream\Tests\D">'.
-      '<element data-class="HTL\SGMLStream\Tests\DumpFlow">'.
-      ' AW(AW wrote this) SW(SW wrote this) '.
-      '</element></element></element></element></element></element>';
-
-    expect(await $tree->toHTMLStringAsync())->toEqual($expected);
   }
 }
