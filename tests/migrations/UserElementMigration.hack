@@ -51,7 +51,15 @@ final class UserElementMigration extends BaseMigration {
       return $ast;
     }
 
-    $namespace_scopes = $ast->getNamespaces();
+    $namespace_scopes = $ast->getNamespaces()
+      |> Vec\filter(
+        $$,
+        $scope ==> !(
+          $scope['children']->getCount() === 1 &&
+          $scope['children']->getChildren()[0]->getSyntaxKind() ===
+            'markup_section'
+        ),
+      );
     if (C\count($namespace_scopes) !== 1) {
       \error_log('Namespace blocks not supported. Failed to migrate: '.$path);
       return $ast;
@@ -123,8 +131,10 @@ final class UserElementMigration extends BaseMigration {
 
     $uses_sgml_stream = idx($uses['namespaces'], 'SGMLStream')
       |> Shapes::idx($$, 'name') === 'HTL\\SGMLStream';
-    $uses_sgml_stream_interfaces =
-      idx($uses['namespaces'], 'SGMLStreamInterfaces')
+    $uses_sgml_stream_interfaces = idx(
+      $uses['namespaces'],
+      'SGMLStreamInterfaces',
+    )
       |> Shapes::idx($$, 'name') === 'HTL\\SGMLStreamInterfaces';
     return tuple($uses_sgml_stream, $uses_sgml_stream_interfaces);
   }
@@ -225,8 +235,11 @@ final class UserElementMigration extends BaseMigration {
 
   private static function nameTokenFromText(string $text): ?NameToken {
     $trimmed_text = Str\trim_left($text);
-    $leading =
-      Str\slice($text, 0, Str\length($text) - Str\length($trimmed_text));
+    $leading = Str\slice(
+      $text,
+      0,
+      Str\length($text) - Str\length($trimmed_text),
+    );
     $text = $trimmed_text;
     $trimmed_text = Str\trim_right($text);
     $trailing = Str\slice($text, Str\length($trimmed_text));
