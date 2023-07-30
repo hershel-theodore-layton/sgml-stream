@@ -31,7 +31,7 @@ abstract xhp class RootElement
   }
 
   <<SGMLStreamInterfaces\HHVMSignature('$xhp->:prop')>>
-  final public function getAttribute(string $attr): mixed {
+  final public function getAttribute(string $attr)[]: mixed {
     return $this->attributes[$attr] ?? $this->dataAndAria[$attr] ?? null;
   }
 
