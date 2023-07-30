@@ -15,6 +15,7 @@ trait ElementWithOpenTagOnly {
 
   final public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
+    SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
   ): void {
     if ($this->hasBeenStreamed) {
       throw new _Private\UseAfterRenderException(static::class);
