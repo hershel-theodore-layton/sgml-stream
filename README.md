@@ -87,26 +87,32 @@ namespace MyOwnNamespace;
 
 use type XHPChild;
 use type HTL\SGMLStream\RootElement;
-use type HTL\SGMLStreamInterfaces\{FragElement, SnippetStream};
+use type HTL\SGMLStreamInterfaces\{Flow, FragElement, Init, SnippetStream};
 
 final xhp class conditional_comment extends RootElement {
   attribute string if @required;
 
   <<__Override>>
-  public function placeIntoSnippetStream(SnippetStream $stream): void {
+  public function placeIntoSnippetStream(
+    SnippetStream $stream,
+    Init<Flow> $init_flow,
+  ): void {
     // This is unsafe, since the string passed for `->:if` could break out
     // of this comment and ruin your document. Be careful!
     $stream->addSafeSGML('<!--[if '.$this->:if.']>');
-    $this->placeMyChildrenIntoSnippetStream($stream);
+    $this->placeMyChildrenIntoSnippetStream($stream, $init_flow);
     $stream->addSafeSGML('<![endif]-->');
   }
 }
 
 final xhp class doctype extends RootElement {
   <<__Override>>
-  public function placeIntoSnippetStream(SnippetStream $stream): void {
+  public function placeIntoSnippetStream(
+    SnippetStream $stream,
+    Init<Flow> $init_flow,
+  ): void {
     $stream->addSafeSGML('<!DOCTYPE html>');
-    $this->placeMyChildrenIntoSnippetStream($stream);
+    $this->placeMyChildrenIntoSnippetStream($stream, $init_flow);
   }
 }
 
@@ -117,8 +123,11 @@ final xhp class frag extends RootElement implements FragElement {
   }
 
   <<__Override>>
-  public function placeIntoSnippetStream(SnippetStream $stream): void {
-    $this->placeMyChildrenIntoSnippetStream($stream);
+  public function placeIntoSnippetStream(
+    SnippetStream $stream,
+    Init<Flow> $init_flow,
+  ): void {
+    $this->placeMyChildrenIntoSnippetStream($stream, $init_flow);
   }
 }
 ```
