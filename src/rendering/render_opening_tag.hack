@@ -2,7 +2,6 @@
 namespace HTL\SGMLStream;
 
 use namespace HTL\SGMLStreamInterfaces;
-use type StringishObject;
 use function htmlspecialchars;
 
 function render_opening_tag(
@@ -17,9 +16,12 @@ function render_opening_tag(
       // valueless BooleanAttribute
       $out .= ' '.$key;
     } else {
-      $stringified_value =
-        $value is StringishObject ? $value->__toString() : (string)$value;
-      $out .= ' '.$key.'="'.htmlspecialchars($stringified_value).'"';
+      // `(string) $value` may cast a `StringishObject`.
+      // This has not been removed from hhvm just yet.
+      // `StringishObject` is supported in hhvm version 4.115 and above.
+      // When this cast starts failing at runtime, support for legacy hhvm
+      // versions will have to be dropped.
+      $out .= ' '.$key.'="'.htmlspecialchars((string)$value).'"';
     }
   }
 
