@@ -17,7 +17,7 @@ use namespace HTL\SGMLStreamInterfaces;
 abstract xhp class AsynchronousElement
   extends RootElement
   implements SGMLStreamInterfaces\CanProcessSuccessorFlow {
-  const ctx INITIALZATION_CTX = [];
+  const ctx INITIALIZATION_CTX = [];
   private bool $hasBeenStreamed = false;
 
   /**

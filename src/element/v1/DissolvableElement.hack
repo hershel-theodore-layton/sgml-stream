@@ -31,7 +31,7 @@ use namespace HTL\SGMLStreamInterfaces;
  * results in longer strings and fewer objects inside of the ConcatenatingStream.
  */
 abstract xhp class DissolvableElement extends RootElement {
-  const ctx INITIALZATION_CTX = [];
+  const ctx INITIALIZATION_CTX = [];
   /**
    * Return your representation by composing something Streamable.
    * Do it quickly, as this work happens before the async machine is started.

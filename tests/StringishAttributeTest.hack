@@ -23,7 +23,7 @@ final class StringishAttributeTest extends HackTest {
 
 final class StringishAttribute extends SGMLStream\RootElement {
   use SGMLStream\ElementWithOpenTagOnly;
-  const ctx INITIALZATION_CTX = [];
+  const ctx INITIALIZATION_CTX = [];
   const string TAG_NAME = 'example';
 
   attribute Stringish stringish @required;

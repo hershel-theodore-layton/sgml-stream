@@ -24,7 +24,7 @@ use namespace HTL\SGMLStreamInterfaces;
  * Use this class sparingly!
  */
 abstract xhp class AsynchronousElementWithSuccessorFlow extends RootElement {
-  const ctx INITIALZATION_CTX = [];
+  const ctx INITIALIZATION_CTX = [];
   private bool $hasBeenStreamed = false;
 
   /**

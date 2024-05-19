@@ -19,7 +19,7 @@ use namespace HTL\SGMLStreamInterfaces;
 abstract class AsynchronousElementWithWritableFlow
   extends RootElement
   implements SGMLStreamInterfaces\CanProcessSuccessorFlow {
-  const ctx INITIALZATION_CTX = [];
+  const ctx INITIALIZATION_CTX = [];
   private bool $hasBeenStreamed = false;
 
   /**

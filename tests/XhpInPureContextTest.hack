@@ -92,7 +92,8 @@ final class TestAsynchronousUserElement
 
   <<__Override>>
   protected async function composeAsync(
-    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_descendant_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
+      $_descendant_flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element />;
   }
@@ -107,7 +108,8 @@ final class TestSimpleUserElement extends SGMLStream\SimpleUserElement {
 
   <<__Override>>
   protected function compose(
-    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_descendant_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
+      $_descendant_flow,
   ): SGMLStreamInterfaces\Streamable {
     return <element />;
   }
@@ -171,7 +173,8 @@ final class TestAsynchronousElement extends SGMLStream\AsynchronousElement {
 
   <<__Override>>
   protected async function renderAsync(
-    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_descendant_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
+      $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element />;
@@ -223,7 +226,8 @@ final class TestSimpleElement extends SGMLStream\SimpleElement {
 
   <<__Override>>
   protected function render(
-    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_descendant_flow,
+    SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
+      $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
   ): SGMLStreamInterfaces\Streamable {
     return <element />;
@@ -269,7 +273,7 @@ final class TestSimpleElementWithWritableFlow
 }
 
 final class TestElementWithImpureInit extends SGMLStream\RootElement {
-  const ctx INITIALZATION_CTX = [defaults];
+  const ctx INITIALIZATION_CTX = [defaults];
 
   private bool $canStillDoImpureThings = false;
 

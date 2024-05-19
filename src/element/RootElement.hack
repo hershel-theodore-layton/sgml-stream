@@ -10,7 +10,7 @@ abstract class RootElement
   // Must be kept in sync with xhp-lib
   const string SPREAD_PREFIX = '...$';
 
-  abstract const ctx INITIALZATION_CTX;
+  abstract const ctx INITIALIZATION_CTX;
 
   private dict<string, nonnull> $attributes;
   private dict<string, arraykey> $dataAndAria;
@@ -19,14 +19,14 @@ abstract class RootElement
   /**
    * Virtual pseudo constructor. Invoked after attribute+child initialization.
    */
-  protected function init()[this::INITIALZATION_CTX]: void {}
+  protected function init()[this::INITIALIZATION_CTX]: void {}
 
   <<SGMLStreamInterfaces\HHVMSignature('<p id="a">...</p>')>>
   final public function __construct(
     KeyedTraversable<string, mixed> $attributes,
     Traversable<?XHPChild> $children,
     dynamic ...$_debug_info
-  )[this::INITIALZATION_CTX] {
+  )[this::INITIALIZATION_CTX] {
     list($this->attributes, $this->dataAndAria) =
       self::initializeAttributes($attributes);
     $this->children = self::flattenChildren($children);
