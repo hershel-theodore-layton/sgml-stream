@@ -3,7 +3,7 @@ namespace HTL\SGMLStream\Tests;
 
 use function Facebook\FBExpect\expect;
 use type Facebook\HackTest\HackTest;
-use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
+use namespace HTL\SGMLStream;
 use type Stringish;
 
 final class StringishAttributeTest extends HackTest {
