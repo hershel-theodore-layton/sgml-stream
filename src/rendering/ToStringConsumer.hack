@@ -12,17 +12,19 @@ final class ToStringConsumer implements SGMLStreamInterfaces\Consumer {
   private string $buf = '';
   private bool $isComplete = false;
 
-  public async function consumeAsync(string $bytes): Awaitable<void> {
+  public async function consumeAsync(string $bytes)[defaults]: Awaitable<void> {
     $this->buf .= $bytes;
   }
 
-  public async function receiveWaitNotificationAsync(): Awaitable<void> {}
-  public async function flushAsync(): Awaitable<void> {}
-  public async function theDocumentIsCompleteAsync(): Awaitable<void> {
+  public async function receiveWaitNotificationAsync(
+  )[defaults]: Awaitable<void> {}
+  public async function flushAsync()[defaults]: Awaitable<void> {}
+  public async function theDocumentIsCompleteAsync(
+  )[defaults]: Awaitable<void> {
     $this->isComplete = true;
   }
 
-  public function toString(): string {
+  public function toString()[]: string {
     invariant(
       $this->isComplete,
       'The Streamable has not yet been fully consumed. '.

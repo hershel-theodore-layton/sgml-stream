@@ -21,11 +21,11 @@ final class AwaitableSnippetWithSuccessorFlow
       SGMLStreamInterfaces\SnippetStream,
       SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
     )>) $childFunc,
-  ) {}
+  )[] {}
 
   public async function primeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow> $flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $this->descendantFlow = $flow;
   }
 
@@ -33,7 +33,7 @@ final class AwaitableSnippetWithSuccessorFlow
     SGMLStreamInterfaces\Consumer $consumer,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $successor_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $descendant_flow = $this->descendantFlow;
 
     if ($descendant_flow is null) {

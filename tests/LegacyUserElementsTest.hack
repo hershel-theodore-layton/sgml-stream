@@ -44,76 +44,46 @@ final class LegacyUserElementsTest extends HackTest {
 }
 
 final class S extends SGMLStream\SimpleUserElement {
-  private bool $initCalled = false;
-  <<__Override>>
-  protected function init(): void {
-    $this->initCalled = true;
-  }
   <<__Override>>
   protected function compose(
     SGMLStreamInterfaces\Flow $_flow,
   ): SGMLStreamInterfaces\Streamable {
-    invariant($this->initCalled, 'init not called');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
 
 final class SW extends SGMLStream\SimpleUserElementWithWritableFlow {
-  private bool $initCalled = false;
-  <<__Override>>
-  protected function init(): void {
-    $this->initCalled = true;
-  }
   <<__Override>>
   protected function compose(
     SGMLStreamInterfaces\WritableFlow $flow,
   ): SGMLStreamInterfaces\Streamable {
-    invariant($this->initCalled, 'init not called');
     $flow->assignVariable(static::class, 'SW wrote this');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
 
 final class A extends SGMLStream\AsynchronousUserElement {
-  private bool $initCalled = false;
-  <<__Override>>
-  protected function init(): void {
-    $this->initCalled = true;
-  }
   <<__Override>>
   protected async function composeAsync(
     SGMLStreamInterfaces\Flow $_flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable> {
-    invariant($this->initCalled, 'init not called');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
 
 final class AW extends SGMLStream\AsynchronousUserElementWithWritableFlow {
-  private bool $initCalled = false;
-  <<__Override>>
-  protected function init(): void {
-    $this->initCalled = true;
-  }
   <<__Override>>
   protected async function composeAsync(
     SGMLStreamInterfaces\WritableFlow $flow,
   ): Awaitable<SGMLStreamInterfaces\Streamable> {
-    invariant($this->initCalled, 'init not called');
     $flow->assignVariable(static::class, 'AW wrote this');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
 
 final class D extends SGMLStream\DissolvableUserElement {
-  private bool $initCalled = false;
-  <<__Override>>
-  protected function init(): void {
-    $this->initCalled = true;
-  }
   <<__Override>>
   protected function compose(): SGMLStreamInterfaces\Streamable {
-    invariant($this->initCalled, 'init not called');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }

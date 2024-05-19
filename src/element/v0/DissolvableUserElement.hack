@@ -14,12 +14,13 @@ abstract xhp class DissolvableUserElement extends DissolvableElement {
    * Return your representation by composing something Streamable.
    * Do it quickly, as this work happens before the async machine is started.
    */
-  abstract protected function compose(): SGMLStreamInterfaces\Streamable;
+  abstract protected function compose(
+  )[defaults]: SGMLStreamInterfaces\Streamable;
 
   <<__Override>>
   final protected function render(
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[defaults]: SGMLStreamInterfaces\Streamable {
     return $this->compose();
   }
 }

@@ -12,5 +12,5 @@ trait IgnoreSuccessorFlow {
   final public function processSuccessorFlow(
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $_successor_flow,
-  ): void {}
+  )[]: void {}
 }

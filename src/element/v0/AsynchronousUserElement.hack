@@ -18,13 +18,13 @@ abstract xhp class AsynchronousUserElement extends AsynchronousElement {
    */
   abstract protected function composeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable>;
+  )[defaults]: Awaitable<SGMLStreamInterfaces\Streamable>;
 
   <<__Override>>
   final protected async function renderAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[defaults]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return await $this->composeAsync($descendant_flow);
   }
 }

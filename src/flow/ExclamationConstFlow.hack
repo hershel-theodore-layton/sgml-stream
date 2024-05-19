@@ -13,9 +13,9 @@ use namespace HTL\SGMLStreamInterfaces;
 final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
   private bool $hasBeenCopied = false;
 
-  private function __construct(private dict<string, mixed> $data) {}
+  private function __construct(private dict<string, mixed> $data)[] {}
 
-  public static function createEmpty(): SGMLStreamInterfaces\Chameleon<this> {
+  public static function createEmpty()[]: SGMLStreamInterfaces\Chameleon<this> {
     return
       SGMLStreamInterfaces\cast_to_chameleon__DO_NOT_USE(new static(dict[]));
   }
@@ -23,7 +23,7 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
   public static function createWithConstantsAndVariables(
     dict<string, mixed> $constants,
     dict<string, mixed> $variables,
-  ): SGMLStreamInterfaces\Chameleon<this> {
+  )[]: SGMLStreamInterfaces\Chameleon<this> {
     foreach ($constants as $c => $_) {
       invariant(
         $c[0] === '!',
@@ -43,7 +43,7 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
     );
   }
 
-  public function assignVariable(string $key, mixed $value): void {
+  public function assignVariable(string $key, mixed $value)[write_props]: void {
     $this->noUseAfterCopy();
     invariant(
       $key[0] !== '!',
@@ -53,7 +53,10 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
     $this->data[$key] = $value;
   }
 
-  public function declareConstant(string $key, mixed $value): void {
+  public function declareConstant(
+    string $key,
+    mixed $value,
+  )[write_props]: void {
     $this->noUseAfterCopy();
     invariant($key[0] === '!', 'Constants must with an `!`, got "%s"', $key);
     if (C\contains_key($this->data, $key)) {
@@ -62,11 +65,11 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
     $this->data[$key] = $value;
   }
 
-  public function get(string $key): mixed {
+  public function get(string $key)[]: mixed {
     return $this->data[$key] ?? null;
   }
 
-  public function getx(string $key): mixed {
+  public function getx(string $key)[]: mixed {
     try {
       return $this->data[$key];
     } catch (\OutOfBoundsException $_) {
@@ -74,16 +77,16 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
     }
   }
 
-  public function has(string $key): bool {
+  public function has(string $key)[]: bool {
     return C\contains_key($this->data, $key);
   }
 
-  public function makeCopyForChild(): this {
+  public function makeCopyForChild()[write_props]: this {
     $this->hasBeenCopied = true;
     return new static($this->data);
   }
 
-  private function noUseAfterCopy(): void {
+  private function noUseAfterCopy()[]: void {
     invariant(
       !$this->hasBeenCopied,
       'Can not modify %s after a copy has been made',

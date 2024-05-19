@@ -21,14 +21,14 @@ abstract xhp class SimpleUserElementWithWritableFlow
   abstract protected function compose(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\WritableFlow>
       $descendant_flow,
-  ): SGMLStreamInterfaces\Streamable;
+  )[defaults]: SGMLStreamInterfaces\Streamable;
 
   <<__Override>>
   final protected function render(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\WritableFlow>
       $descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[defaults]: SGMLStreamInterfaces\Streamable {
     return $this->compose($descendant_flow);
   }
 }

@@ -31,19 +31,20 @@ use namespace HTL\SGMLStreamInterfaces;
  * results in longer strings and fewer objects inside of the ConcatenatingStream.
  */
 abstract xhp class DissolvableElement extends RootElement {
+  const ctx INITIALZATION_CTX = [];
   /**
    * Return your representation by composing something Streamable.
    * Do it quickly, as this work happens before the async machine is started.
    */
   abstract protected function render(
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
-  ): SGMLStreamInterfaces\Streamable;
+  )[defaults]: SGMLStreamInterfaces\Streamable;
 
   <<__Override>>
   final public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
-  ): void {
+  )[defaults]: void {
     $this->render($init_flow)->placeIntoSnippetStream($stream, $init_flow);
   }
 }

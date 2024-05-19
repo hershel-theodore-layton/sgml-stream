@@ -16,17 +16,17 @@ final class SGMLSnippet implements SGMLStreamInterfaces\Snippet {
    * An empty string is optimized away and will not call the consumeAsync method
    * on the Renderer.
    */
-  public function __construct(private string $safeSGML) {}
+  public function __construct(private string $safeSGML)[] {}
 
   public async function primeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_flow,
-  ): Awaitable<void> {}
+  )[defaults]: Awaitable<void> {}
 
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $_successor_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     if ($this->safeSGML !== '') {
       await $consumer->consumeAsync($this->safeSGML);
     }

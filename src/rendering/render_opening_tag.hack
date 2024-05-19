@@ -2,13 +2,14 @@
 namespace HTL\SGMLStream;
 
 use namespace HTL\SGMLStreamInterfaces;
+use type StringishObject;
 use function htmlspecialchars;
 
 function render_opening_tag(
   string $tag,
   dict<string, arraykey> $data_and_aria,
   dict<string, nonnull> $declared_attributes,
-): string {
+)[defaults]: string {
   $out = '<'.$tag;
 
   foreach ($declared_attributes as $key => $value) {
@@ -16,7 +17,9 @@ function render_opening_tag(
       // valueless BooleanAttribute
       $out .= ' '.$key;
     } else {
-      $out .= ' '.$key.'="'.htmlspecialchars((string)$value).'"';
+      $stringified_value =
+        $value is StringishObject ? $value->__toString() : (string)$value;
+      $out .= ' '.$key.'="'.htmlspecialchars($stringified_value).'"';
     }
   }
 

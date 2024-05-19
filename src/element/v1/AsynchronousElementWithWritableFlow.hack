@@ -19,6 +19,7 @@ use namespace HTL\SGMLStreamInterfaces;
 abstract class AsynchronousElementWithWritableFlow
   extends RootElement
   implements SGMLStreamInterfaces\CanProcessSuccessorFlow {
+  const ctx INITIALZATION_CTX = [];
   private bool $hasBeenStreamed = false;
 
   /**
@@ -29,13 +30,13 @@ abstract class AsynchronousElementWithWritableFlow
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\WritableFlow>
       $descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable>;
+  )[defaults]: Awaitable<SGMLStreamInterfaces\Streamable>;
 
   <<__Override>>
   final public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
-  ): void {
+  )[defaults]: void {
     if ($this->hasBeenStreamed) {
       throw new _Private\UseAfterRenderException(static::class);
     }

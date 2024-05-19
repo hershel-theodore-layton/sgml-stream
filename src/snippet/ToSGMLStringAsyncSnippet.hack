@@ -17,11 +17,11 @@ final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
 
   public function __construct(
     private SGMLStreamInterfaces\ToSGMLStringAsync $toSGMLStringAsync,
-  ) {}
+  )[] {}
 
   public async function primeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow> $_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     try {
       $this->stringAwaitable = $this->toSGMLStringAsync->toHTMLStringAsync();
       await $this->stringAwaitable;
@@ -34,7 +34,7 @@ final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
     SGMLStreamInterfaces\Consumer $consumer,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $_successor_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $string_awaitable = $this->stringAwaitable;
     if ($string_awaitable is null) {
       throw $this->caughtThrowable ??

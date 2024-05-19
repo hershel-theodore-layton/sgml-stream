@@ -9,13 +9,13 @@ use namespace HTL\SGMLStreamInterfaces;
 final class FlushingSnippet implements SGMLStreamInterfaces\Snippet {
   public async function primeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $_flow,
-  ): Awaitable<void> {}
+  )[defaults]: Awaitable<void> {}
 
   public async function feedBytesToConsumerAsync(
     SGMLStreamInterfaces\Consumer $consumer,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $_successor_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     await $consumer->flushAsync();
   }
 }

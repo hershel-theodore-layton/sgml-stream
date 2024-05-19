@@ -14,7 +14,7 @@ final class ConcurrentReusableRenderer
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $successor_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $streamable->placeIntoSnippetStream($stream, $init_flow);
     $snippets = $stream->collect();
 

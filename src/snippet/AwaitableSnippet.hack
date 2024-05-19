@@ -21,11 +21,11 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
       SGMLStreamInterfaces\SnippetStream,
       SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
     )>) $childFunc,
-  ) {}
+  )[] {}
 
   public async function primeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow> $flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $this->awaitable = async {
       list($stream, $flow) = await ($this->childFunc)($flow);
       $snippets = $stream->collect();
@@ -46,7 +46,7 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
     SGMLStreamInterfaces\Consumer $consumer,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $successor_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $snippets_awaitable = async {
       if ($this->awaitable is null) {
         throw new _Private\SnippetNotPrimedException(static::class);

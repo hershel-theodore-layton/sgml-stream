@@ -12,12 +12,12 @@ final class ConcurrentSingleUseRenderer
 
   public function __construct(
     private SGMLStreamInterfaces\SnippetStream $stream,
-  ) {}
+  )[] {}
 
   public async function renderAsync(
     SGMLStreamInterfaces\Consumer $consumer,
     SGMLStreamInterfaces\CopyableFlow $flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     invariant(
       !$this->hasRendered,
       'You may not use the same %s twice',

@@ -10,7 +10,7 @@ final class RedeclaredConstantException
     private string $key,
     string $set,
     string $present = 'constant',
-  ) {
+  )[] {
     parent::__construct(
       'You may not declare the '.
       $set.
@@ -22,7 +22,7 @@ final class RedeclaredConstantException
     );
   }
 
-  public function getKey(): string {
+  public function getKey()[]: string {
     return $this->key;
   }
 }

@@ -20,13 +20,13 @@ trait CallbackSuccessorFlow {
 
   private ?(function(
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>,
-  ): void) $callback;
+  )[defaults]: void) $callback;
 
   final protected function setSuccessorFlowCallback(
     (function(
       SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>,
     ): void) $callback,
-  ): void {
+  )[write_props]: void {
     invariant($this->callback is null, 'You may not set multiple callbacks.');
     $this->callback = $callback;
   }
@@ -34,7 +34,7 @@ trait CallbackSuccessorFlow {
   final public function processSuccessorFlow(
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $successor_flow,
-  ): void {
+  )[defaults]: void {
     if ($this->callback is nonnull) {
       ($this->callback)($successor_flow);
     }

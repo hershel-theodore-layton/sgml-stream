@@ -20,6 +20,7 @@ use namespace HTL\SGMLStreamInterfaces;
 abstract xhp class SimpleElement
   extends RootElement
   implements SGMLStreamInterfaces\CanProcessSuccessorFlow {
+  const ctx INITIALZATION_CTX = [];
   private bool $hasBeenStreamed = false;
 
   /**
@@ -29,13 +30,13 @@ abstract xhp class SimpleElement
   abstract protected function render(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow> $descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
-  ): SGMLStreamInterfaces\Streamable;
+  )[defaults]: SGMLStreamInterfaces\Streamable;
 
   <<__Override>>
   final public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
-  ): void {
+  )[defaults]: void {
     if ($this->hasBeenStreamed) {
       throw new _Private\UseAfterRenderException(static::class);
     }

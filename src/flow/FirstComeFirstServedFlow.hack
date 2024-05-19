@@ -17,9 +17,9 @@ final class FirstComeFirstServedFlow
   private function __construct(
     private dict<string, mixed> $constants,
     private dict<string, mixed> $variables,
-  ) {}
+  )[] {}
 
-  public static function createEmpty(): SGMLStreamInterfaces\Chameleon<this> {
+  public static function createEmpty()[]: SGMLStreamInterfaces\Chameleon<this> {
     return SGMLStreamInterfaces\cast_to_chameleon__DO_NOT_USE(
       new static(dict[], dict[]),
     );
@@ -28,7 +28,7 @@ final class FirstComeFirstServedFlow
   public static function createWithConstantsAndVariables(
     dict<string, mixed> $constants,
     dict<string, mixed> $variables,
-  ): SGMLStreamInterfaces\Chameleon<this> {
+  )[]: SGMLStreamInterfaces\Chameleon<this> {
     foreach ($variables as $v => $_) {
       if (C\contains_key($constants, $v)) {
         throw new _Private\RedeclaredConstantException($v, 'variable');
@@ -39,28 +39,28 @@ final class FirstComeFirstServedFlow
     );
   }
 
-  public function assignVariable(string $key, mixed $value): void {
+  public function assignVariable(string $key, mixed $value)[write_props]: void {
     if (C\contains_key($this->constants, $key)) {
       throw new _Private\RedeclaredConstantException($key, 'variable');
     }
     $this->variables[$key] = $value;
   }
 
-  public function declareConstant(string $key, mixed $value): void {
+  public function declareConstant(
+    string $key,
+    mixed $value,
+  )[write_props]: void {
     if (C\contains_key($this->constants, $key)) {
       throw new _Private\RedeclaredConstantException($key, 'constant');
     }
     if (C\contains_key($this->variables, $key)) {
-      throw new _Private\RedeclaredConstantException(
-        $key,
-        'constant',
-        'variable',
-      );
+      throw
+        new _Private\RedeclaredConstantException($key, 'constant', 'variable');
     }
     $this->constants[$key] = $value;
   }
 
-  public function get(string $key): mixed {
+  public function get(string $key)[]: mixed {
     if (C\contains_key($this->constants, $key)) {
       return $this->constants[$key];
     } else if (C\contains_key($this->variables, $key)) {
@@ -70,7 +70,7 @@ final class FirstComeFirstServedFlow
     }
   }
 
-  public function getx(string $key): mixed {
+  public function getx(string $key)[]: mixed {
     if (C\contains_key($this->constants, $key)) {
       return $this->constants[$key];
     } else if (C\contains_key($this->variables, $key)) {
@@ -80,12 +80,12 @@ final class FirstComeFirstServedFlow
     }
   }
 
-  public function has(string $key): bool {
+  public function has(string $key)[]: bool {
     return C\contains_key($this->constants, $key) ||
       C\contains_key($this->variables, $key);
   }
 
-  public function makeCopyForChild(): this {
+  public function makeCopyForChild()[]: this {
     return new static($this->constants, $this->variables);
   }
 }

@@ -18,11 +18,11 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
       SGMLStreamInterfaces\SnippetStream,
       SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
     )) $childFunc,
-  ) {}
+  )[] {}
 
   public async function primeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow> $flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     try {
       list($stream, $flow) = ($this->childFunc)($flow);
       $this->snippets = $stream->collect();
@@ -43,7 +43,7 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
     SGMLStreamInterfaces\Consumer $consumer,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $successor_flow,
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     if ($this->snippets is null) {
       throw $this->caughtThrowable ??
         new _Private\SnippetNotPrimedException(static::class);

@@ -5,10 +5,12 @@ use namespace HH\Lib\{C, Str};
 use namespace HTL\SGMLStreamInterfaces;
 use type XHPChild;
 
-abstract xhp class RootElement
+abstract class RootElement
   implements SGMLStreamInterfaces\Streamable, SGMLStreamInterfaces\Element {
   // Must be kept in sync with xhp-lib
   const string SPREAD_PREFIX = '...$';
+
+  abstract const ctx INITIALZATION_CTX;
 
   private dict<string, nonnull> $attributes;
   private dict<string, arraykey> $dataAndAria;
@@ -17,16 +19,17 @@ abstract xhp class RootElement
   /**
    * Virtual pseudo constructor. Invoked after attribute+child initialization.
    */
-  protected function init(): void {}
+  protected function init()[this::INITIALZATION_CTX]: void {}
 
   <<SGMLStreamInterfaces\HHVMSignature('<p id="a">...</p>')>>
   final public function __construct(
     KeyedTraversable<string, mixed> $attributes,
     Traversable<?XHPChild> $children,
     dynamic ...$_debug_info
-  ) {
-    $this->initializeAttributes($attributes);
-    $this->appendXHPChildren($children);
+  )[this::INITIALZATION_CTX] {
+    list($this->attributes, $this->dataAndAria) =
+      self::initializeAttributes($attributes);
+    $this->children = self::flattenChildren($children);
     $this->init();
   }
 
@@ -36,10 +39,10 @@ abstract xhp class RootElement
   }
 
   /**
-   * Explicitly virtual to allow application developers to choose other
-   * implementations of SnippetStream, Renderer, Consumer, and Flow.
+   * Explicitly virtual (non-final) to allow application developers to choose
+   * other implementations of SnippetStream, Renderer, Consumer, and Flow.
    */
-  public async function toHTMLStringAsync(): Awaitable<string> {
+  public async function toHTMLStringAsync()[defaults]: Awaitable<string> {
     $renderer = new ConcurrentReusableRenderer();
     $consumer = new ToStringConsumer();
     await $renderer->renderAsync(
@@ -53,22 +56,23 @@ abstract xhp class RootElement
     return $consumer->toString();
   }
 
-  final protected function getChildren(): vec<XHPChild> {
+  final protected function getChildren()[]: vec<XHPChild> {
     return $this->children;
   }
 
-  final protected function getDataAndAriaAttributes(): dict<string, arraykey> {
+  final protected function getDataAndAriaAttributes(
+  )[]: dict<string, arraykey> {
     return $this->dataAndAria;
   }
 
-  final protected function getDeclaredAttributes(): dict<string, nonnull> {
+  final protected function getDeclaredAttributes()[]: dict<string, nonnull> {
     return $this->attributes;
   }
 
   final protected function placeMyChildrenIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
-  ): void {
+  )[defaults]: void {
     foreach ($this->getChildren() as $child) {
       if ($child is SGMLStreamInterfaces\Streamable) {
         $child->placeIntoSnippetStream($stream, $init_flow);
@@ -86,7 +90,7 @@ abstract xhp class RootElement
     SGMLStreamInterfaces\SnippetStream $stream,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $init_flow,
     Traversable<mixed> $children,
-  ): void {
+  )[defaults]: void {
     foreach ($children as $child) {
       if ($child is SGMLStreamInterfaces\Streamable) {
         $child->placeIntoSnippetStream($stream, $init_flow);
@@ -94,9 +98,7 @@ abstract xhp class RootElement
         self::placeTraversableIntoSnippetStream($stream, $init_flow, $child);
       } else if ($child is SGMLStreamInterfaces\ToSGMLStringAsync) {
         $stream->addSnippet(new ToSGMLStringAsyncSnippet($child));
-      } else if ($child is null) {
-        // ignore
-      } else /*if ($child is scalar) */ {
+      } else if ($child is nonnull /* $child is scalar */) {
         $stream->addSafeSGML(self::htmlSpecialChars($child));
       }
     }
@@ -108,14 +110,18 @@ abstract xhp class RootElement
    */
   <<SGMLStreamInterfaces\HHVMSignature('attribute string alt = ""')>>
   protected static function __xhpAttributeDeclaration(
-  ): darray<string, varray<mixed>> {
+  )[]: darray<string, varray<mixed>> {
     return darray[];
   }
 
-  private function appendXHPChildren(Traversable<?XHPChild> $children): void {
+  private function appendXHPChildren(
+    Traversable<?XHPChild> $children,
+  )[write_props]: void {
     foreach ($children as $child) {
       if ($child is SGMLStreamInterfaces\FragElement) {
-        $this->appendXHPChildren($child->getFragChildren());
+        foreach ($child->getFragChildren() as $c) {
+          $this->children[] = $c;
+        }
       } else if ($child is Traversable<_>) {
         $this->appendTraversable($child);
       } else if ($child is nonnull) {
@@ -124,10 +130,14 @@ abstract xhp class RootElement
     }
   }
 
-  private function appendTraversable(Traversable<mixed> $children): void {
+  private function appendTraversable(
+    Traversable<mixed> $children,
+  )[write_props]: void {
     foreach ($children as $child) {
       if ($child is SGMLStreamInterfaces\FragElement) {
-        $this->appendXHPChildren($child->getFragChildren());
+        foreach ($child->getFragChildren() as $c) {
+          $this->children[] = $c;
+        }
       } else if ($child is Traversable<_>) {
         $this->appendTraversable($child);
       } else if ($child is XHPChild) {
@@ -148,7 +158,7 @@ abstract xhp class RootElement
 
   <<__MemoizeLSB>>
   private static function defaultAttributes(
-  ): (dict<string, nonnull>, dict<string, arraykey>) {
+  )[]: (dict<string, nonnull>, dict<string, arraykey>) {
     $attributes = dict[];
     $data_and_aria = dict[];
     foreach (static::__xhpAttributeDeclaration() as $key => $info) {
@@ -173,11 +183,11 @@ abstract xhp class RootElement
     return tuple($attributes, $data_and_aria);
   }
 
-  private static function hasAttribute(string $attr): bool {
+  private static function hasAttribute(string $attr)[]: bool {
     return C\contains_key(static::__xhpAttributeDeclaration(), $attr);
   }
 
-  private static function htmlSpecialChars(mixed $scalar): string {
+  private static function htmlSpecialChars(mixed $scalar)[defaults]: string {
     invariant(
       \is_scalar($scalar),
       '%s does not implement %s, and can not be implicitly htmlspecialchars-ed',
@@ -187,9 +197,9 @@ abstract xhp class RootElement
     return \htmlspecialchars((string)$scalar);
   }
 
-  private function initializeAttributes(
-    KeyedTraversable<string, mixed> $attributes,
-  ): void {
+  private static function initializeAttributes(
+    KeyedTraversable<string, mixed> $mixed_attributes,
+  )[]: (dict<string, nonnull>, dict<string, arraykey>) {
     // Initialization of attributes:
     // - Put the default values at the front.
     //   They can be overwritten by explicit values.
@@ -202,71 +212,119 @@ abstract xhp class RootElement
     // - If we get a spread, copy all the nonnull values over
     //   and ignore the null values.
 
-    list($this->attributes, $this->dataAndAria) = self::defaultAttributes();
-    foreach ($attributes as $key => $value) {
+    list($attributes, $data_and_aria) = self::defaultAttributes();
+    foreach ($mixed_attributes as $key => $value) {
       if ($value is null) {
         if (self::isDataOrAria($key)) {
-          if (C\contains_key($this->dataAndAria, $key)) {
-            unset($this->dataAndAria[$key]);
+          if (C\contains_key($data_and_aria, $key)) {
+            unset($data_and_aria[$key]);
           }
         } else {
           // We don't check for the spread operator here.
           // Spreading null is a typechecker error.
           // If this error is fixme'd, this is a noop anyway.
-          if (C\contains_key($this->attributes, $key)) {
-            unset($this->attributes[$key]);
+          if (C\contains_key($attributes, $key)) {
+            unset($attributes[$key]);
           }
         }
-      } else {
-        if (self::isSpreadOperator($key)) {
-          $this->spread($value);
-        } else if (self::isDataOrAria($key)) {
-          invariant(
-            $value is arraykey,
-            'data- and aria- attributes may only have arraykey values. '.
-            'Value passed for <%s %s={...} /> is %s.',
-            static::class,
-            $key,
-            self::typeName($value),
-          );
-          $this->dataAndAria[$key] = $value;
-        } else {
-          $this->attributes[$key] = $value;
+      } else if (self::isSpreadOperator($key)) {
+        invariant(
+          $value is SGMLStreamInterfaces\Element,
+          'Spread source %s does not implement %s. '.
+          'If this is an xhp object from a different xhp library, '.
+          'you might want to implement %s to allow spreading into %s.',
+          self::typeName($value),
+          SGMLStreamInterfaces\Element::class,
+          SGMLStreamInterfaces\Element::class,
+          static::class,
+        );
+
+        foreach ($value->getDataAndAriaAttributes() as $k => $v) {
+          $data_and_aria[$k] = $v;
         }
+
+        foreach ($value->getDeclaredAttributes() as $k => $v) {
+          if (self::hasAttribute($k)) {
+            $attributes[$k] = $v;
+          }
+        }
+      } else if (self::isDataOrAria($key)) {
+        invariant(
+          $value is arraykey,
+          'data- and aria- attributes may only have arraykey values. '.
+          'Value passed for <%s %s={...} /> is %s.',
+          static::class,
+          $key,
+          self::typeName($value),
+        );
+        $data_and_aria[$key] = $value;
+      } else {
+        $attributes[$key] = $value;
       }
     }
+
+    return tuple($attributes, $data_and_aria);
   }
 
-  private function spread(mixed $other): void {
-    invariant(
-      $other is SGMLStreamInterfaces\Element,
-      'Spread source %s does not implement %s. '.
-      'If this is an xhp object from a different xhp library. '.
-      'You might want to implement it to allow spreading into %s.',
-      self::typeName($other),
-      SGMLStreamInterfaces\Element::class,
-      static::class,
-    );
-    foreach ($other->getDataAndAriaAttributes() as $key => $value) {
-      $this->dataAndAria[$key] = $value;
-    }
-
-    foreach ($other->getDeclaredAttributes() as $key => $value) {
-      if (self::hasAttribute($key)) {
-        $this->attributes[$key] = $value;
-      }
-    }
-  }
-
-  private static function isDataOrAria(string $key): bool {
+  private static function isDataOrAria(string $key)[]: bool {
     return Str\starts_with($key, 'data-') || Str\starts_with($key, 'aria-');
   }
 
-  private static function isSpreadOperator(string $key): bool {
+  private static function isSpreadOperator(string $key)[]: bool {
     return Str\starts_with($key, self::SPREAD_PREFIX);
   }
 
-  private static function typeName(mixed $mixed): string {
+  private static function typeName(mixed $mixed)[]: string {
     return \is_object($mixed) ? \get_class($mixed) : \gettype($mixed);
+  }
+
+  private static function flattenChildren(
+    Traversable<?XHPChild> $children,
+  )[]: vec<XHPChild> {
+    $flattened = vec[];
+
+    foreach ($children as $child) {
+      if ($child is SGMLStreamInterfaces\FragElement) {
+        foreach ($child->getFragChildren() as $c) {
+          $flattened[] = $c;
+        }
+      } else if ($child is Traversable<_>) {
+        foreach (self::flattenTraversable($child) as $c) {
+          $flattened[] = $c;
+        }
+      } else if ($child is nonnull) {
+        $flattened[] = $child;
+      }
+    }
+
+    return $flattened;
+  }
+
+  private static function flattenTraversable(
+    Traversable<mixed> $mixed_children,
+  )[]: Traversable<XHPChild> {
+    foreach ($mixed_children as $child) {
+      if ($child is SGMLStreamInterfaces\FragElement) {
+        foreach ($child->getFragChildren() as $c) {
+          yield $c;
+        }
+      } else if ($child is Traversable<_>) {
+        foreach (self::flattenTraversable($child) as $c) {
+          yield $c;
+        }
+      } else if ($child is XHPChild) {
+        yield $child;
+      } else {
+        invariant(
+          $child is null,
+          'A %s contained a non-XHPChild. '.
+          'All children must be an XHPChild. '.
+          'AnyArray<_, _> unconditionally implements XHPChild, '.
+          'even when Tv is not a subtype of XHPChild. '.
+          'This is the reason why the typechecker did not catch this error.',
+          self::typeName($child),
+        );
+      }
+    }
   }
 }

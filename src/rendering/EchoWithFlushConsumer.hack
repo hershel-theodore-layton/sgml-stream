@@ -7,16 +7,18 @@ use namespace HTL\SGMLStreamInterfaces;
  * Consumes content by using echo and flush().
  */
 final class EchoWithFlushConsumer implements SGMLStreamInterfaces\Consumer {
-  public async function consumeAsync(string $bytes): Awaitable<void> {
+  public async function consumeAsync(string $bytes)[defaults]: Awaitable<void> {
     echo $bytes;
   }
-  public async function receiveWaitNotificationAsync(): Awaitable<void> {
+  public async function receiveWaitNotificationAsync(
+  )[defaults]: Awaitable<void> {
     \flush();
   }
-  public async function flushAsync(): Awaitable<void> {
+  public async function flushAsync()[defaults]: Awaitable<void> {
     \flush();
   }
-  public async function theDocumentIsCompleteAsync(): Awaitable<void> {
+  public async function theDocumentIsCompleteAsync(
+  )[defaults]: Awaitable<void> {
     \flush();
   }
 }
