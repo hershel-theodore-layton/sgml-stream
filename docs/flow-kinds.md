@@ -87,7 +87,7 @@ The motivating example for using `Successor<Flow>` is:
 
 `WritesScriptTag` knows that every registration from the predecessors must have completed when its `render()` method is called. Therefore, it will not miss writing our an event listerer.
 
-Before the introduction of `Successor<Flow>`, this pattern required creating your own `Snippet` class. You would also not be able to emit multiple `<WritesScriptTag />` elements on a page. The strict order imposed by `Successor<Flow>` makes it trivial to coordinate multiple `<WritesScriptTag />` elements on a page. Each `<WritesScriptTag />` will empty the registations it handled. Rhe next will observe the registrations made by elements after the previous `<WritesScriptTag/>`
+Before the introduction of `Successor<Flow>`, this pattern required creating your own `Snippet` class. You would also not be able to emit multiple `<WritesScriptTag />` elements on a page. The strict order imposed by `Successor<Flow>` makes it trivial to coordinate multiple `<WritesScriptTag />` elements on a page. Each `<WritesScriptTag />` will empty the registations it handled. The next will observe the registrations made by elements after the previous `<WritesScriptTag/>`
 
 ### Copying a flow
 
