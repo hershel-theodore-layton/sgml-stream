@@ -133,7 +133,7 @@ The following six types have have been kept for backwards compatibility:
 
 These element types don't get access to `Init<Flow>` nor `Successor<Flow>`. Doing so would break backwards compatibility. There is a new variant of each element type available. `PrefixUserElementSuffix` can be replaced with `PrefixElementSuffix`.
 
-If you use HHAST, you can run the migration found at [the sgml-stream github](https://github.com/hershel-theodore-layton/sgml-stream/tree/master/tests/migrations). The output of this migration should be reviewed before committing the code. This migration upgrades `use type` clauses, `extends` clauses, adds a `use IgnoreSuccessorFlow` clause, it renames `compose()` / `composeAsync()`, and adds the `Flow $_init_flow` parameter.
+If you use HHAST, you can run the migration found at [the sgml-stream github](https://github.com/hershel-theodore-layton/sgml-stream/blob/537a7dd956fc6946d5c4631ed311edafdbf7d912/tests/migrations). The output of this migration should be reviewed before committing the code. This migration upgrades `use type` clauses, `extends` clauses, adds a `use IgnoreSuccessorFlow` clause, it renames `compose()` / `composeAsync()`, and adds the `Flow $_init_flow` parameter.
 
 You may have to manually change types from `Flow` to `Descendant<Flow>`, `Init<Flow>`, `Successor<Flow>` in your own code. A migration would not be able to infer how you are going to use this flow.
 
