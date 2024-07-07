@@ -2,6 +2,7 @@
 namespace HTL\SGMLStream;
 
 use namespace HTL\SGMLStreamInterfaces;
+use function HTL\Pragma\pragma;
 
 /**
  * @deprecated Use `ConcurrentReusableRenderer` instead.
@@ -40,10 +41,10 @@ final class ConcurrentSingleUseRenderer
       await AwaitAllWaitHandle::fromVec($awaitables);
       await async {
         foreach ($snippets as $snippet) {
-          /* HHAST_IGNORE_ERROR[DontAwaitInALoop]
-           * feedBytesToConsumer operates on the awaitables from the race.
+          /* feedBytesToConsumer operates on the awaitables from the race.
            * There are no false dependencies here.
            * We just MUST collect bytes in order. */
+          pragma('PhaLinters', 'fixme:dont_await_in_a_loop');
           await $snippet->feedBytesToConsumerAsync($consumer, $successor_flow);
         }
       };

@@ -3,6 +3,7 @@ namespace HTL\SGMLStream;
 
 use namespace HH\Asio;
 use namespace HTL\SGMLStreamInterfaces;
+use function HTL\Pragma\pragma;
 
 /**
  * Priming does nothing. Waits until feedBytesToConsumer to invoke childFunc.
@@ -65,10 +66,10 @@ final class AwaitableSnippetWithSuccessorFlow
       await AwaitAllWaitHandle::fromVec($awaitables);
       await async {
         foreach ($snippets as $snippet) {
-          /* HHAST_IGNORE_ERROR[DontAwaitInALoop]
-           * All these awaitables were started in `primeAsync()`,
-           * so no false dependencies are constructed.
+          /* feedBytesToConsumer operates on the awaitables from the race.
+           * There are no false dependencies here.
            * We just MUST collect bytes in order. */
+          pragma('PhaLinters', 'fixme:dont_await_in_a_loop');
           await $snippet->feedBytesToConsumerAsync($consumer, $successor_flow);
         }
       };
