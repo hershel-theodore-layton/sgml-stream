@@ -5,7 +5,7 @@ use namespace HH\Lib\{C, Str};
 use namespace HTL\SGMLStreamInterfaces;
 use type XHPChild;
 
-abstract class RootElement
+abstract xhp class RootElement
   implements SGMLStreamInterfaces\Streamable, SGMLStreamInterfaces\Element {
   // Must be kept in sync with xhp-lib
   const string SPREAD_PREFIX = '...$';
