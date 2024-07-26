@@ -7,14 +7,15 @@ use namespace HTL\SGMLStream;
 use type Stringish;
 
 final class StringishAttributeTest extends HackTest {
-  public async function test_render_a_string_async(): Awaitable<void> {
+  public async function test_render_a_string_async(
+  )[defaults]: Awaitable<void> {
     $lt = '<';
     expect(await (<StringishAttribute stringish={$lt} />)->toHTMLStringAsync())
       ->toEqual('<example stringish="&lt;">');
   }
 
   public async function test_render_a_stringish_object_async(
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $lt = '<';
     expect(await (<StringishAttribute stringish={$lt} />)->toHTMLStringAsync())
       ->toEqual('<example stringish="&lt;">');
@@ -31,7 +32,7 @@ final class StringishAttribute extends SGMLStream\RootElement {
 
 final class StringishObject {
   public function __construct(private string $str)[] {}
-  public function __toString(): string {
+  public function __toString()[]: string {
     return $this->str;
   }
 }

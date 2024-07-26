@@ -9,7 +9,7 @@ use type Facebook\HackTest\HackTest;
 
 final class BugsInFlowTest extends HackTest {
   public function test_exclamation_const_flow_can_be_constructed_with_variables(
-  ): void {
+  )[defaults]: void {
     $flow = ExclamationConstFlow::createWithConstantsAndVariables(
       dict['!const' => 'c'],
       dict['var' => 'v'],
@@ -19,7 +19,7 @@ final class BugsInFlowTest extends HackTest {
   }
 
   public function test_first_come_first_served_flow_can_getx_a_null_constant(
-  ): void {
+  )[defaults]: void {
     $flow = FirstComeFirstServedFlow::createWithConstantsAndVariables(
       dict['nullable' => null],
       dict[],
@@ -28,7 +28,7 @@ final class BugsInFlowTest extends HackTest {
   }
 
   public function test_first_come_first_served_flow_does_not_permit_constant_overriding_in_the_constructor(
-  ): void {
+  )[defaults]: void {
     expect(
       () ==> FirstComeFirstServedFlow::createWithConstantsAndVariables(
         dict['one' => true],
@@ -38,7 +38,7 @@ final class BugsInFlowTest extends HackTest {
   }
 
   public function test_first_come_first_served_flow_declare_constant_exception_mentions_the_correct_storage_type(
-  ): void {
+  )[defaults]: void {
     $flow = FirstComeFirstServedFlow::createWithConstantsAndVariables(
       dict['const' => true],
       dict['var' => false],

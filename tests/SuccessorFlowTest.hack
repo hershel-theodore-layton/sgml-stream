@@ -12,7 +12,7 @@ use type Facebook\HackTest\HackTest;
 
 final class SuccessorFlowTest extends HackTest {
   public async function testSuccessorFlowWritesAppearInDocumentOrderAndFlowIsNotCopied(
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $successor_flow =
       SGMLStream\ExclamationConstFlow::createWithConstantsAndVariables(
         dict['!mutable_vec' => new MutableVecOfInt(vec[])],
@@ -43,7 +43,8 @@ final class SuccessorFlowTest extends HackTest {
     );
   }
 
-  public async function testCanOnlyObservePredecessorData(): Awaitable<void> {
+  public async function testCanOnlyObservePredecessorData(
+  )[defaults]: Awaitable<void> {
     $successor_flow =
       SGMLStream\ExclamationConstFlow::createWithConstantsAndVariables(
         dict['!mutable_vec' => new MutableVecOfInt(vec[])],
@@ -75,7 +76,7 @@ final class SuccessorFlowTest extends HackTest {
   private static async function renderAsync(
     SGMLStreamInterfaces\Streamable $streamable,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow> $flow,
-  ): Awaitable<string> {
+  )[defaults]: Awaitable<string> {
     $consumer = new SGMLStream\ToStringConsumer();
     $renderer = new SGMLStream\ConcurrentReusableRenderer();
     await $renderer->renderAsync(
@@ -96,7 +97,7 @@ final class Immediate extends SGMLStream\SimpleElement {
   <<__Override>>
   public function processSuccessorFlow(
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow> $flow,
-  ): void {
+  )[defaults]: void {
     $flow->declareConstant(
       '!'.$this->:number,
       clock_gettime_ns(CLOCK_MONOTONIC),
@@ -109,7 +110,7 @@ final class Immediate extends SGMLStream\SimpleElement {
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
       $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return
       <element data-wrote={$this->:number}>{$this->getChildren()}</element>;
   }
@@ -125,7 +126,7 @@ final class Slow extends SGMLStream\AsynchronousElement {
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
       $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[defaults]: Awaitable<SGMLStreamInterfaces\Streamable> {
     $start = clock_gettime_ns(CLOCK_MONOTONIC);
     await Asio\usleep(42);
     $end = clock_gettime_ns(CLOCK_MONOTONIC);
@@ -154,7 +155,7 @@ final class DumpMutableVecOfInt
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $successor_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return
       <element>
         {$successor_flow->getx('!mutable_vec') as MutableVecOfInt->value}

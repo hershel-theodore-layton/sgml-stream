@@ -15,7 +15,7 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
     private SGMLStreamInterfaces\CanProcessSuccessorFlow $processSuccessorFlow,
     private (function(
       SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
-    ): (
+    )[defaults]: (
       SGMLStreamInterfaces\SnippetStream,
       SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
     )) $childFunc,

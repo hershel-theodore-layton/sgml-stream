@@ -18,7 +18,7 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
     private SGMLStreamInterfaces\CanProcessSuccessorFlow $processSuccessorFlow,
     private (function(
       SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
-    ): Awaitable<(
+    )[defaults]: Awaitable<(
       SGMLStreamInterfaces\SnippetStream,
       SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\CopyableFlow>,
     )>) $childFunc,

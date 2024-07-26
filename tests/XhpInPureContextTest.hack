@@ -27,7 +27,7 @@ final class XhpInPureContextTest extends HackTest {
     }
   }
 
-  public function test_init_is_called_at_construction_time(): void {
+  public function test_init_is_called_at_construction_time()[defaults]: void {
     expect(() ==> <TestAsynchronousUserElement />)->toThrow(
       LogicException::class,
       'TestAsynchronousUserElement',
@@ -75,7 +75,7 @@ final class XhpInPureContextTest extends HackTest {
   }
 
   public async function test_can_still_use_an_impure_init_if_need_be_async(
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     expect(await (<TestElementWithImpureInit />)->toHTMLStringAsync())->toEqual(
       'pass',
     );
@@ -94,7 +94,7 @@ final class TestAsynchronousUserElement
   protected async function composeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
       $_descendant_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element />;
   }
 }
@@ -110,7 +110,7 @@ final class TestSimpleUserElement extends SGMLStream\SimpleUserElement {
   protected function compose(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
       $_descendant_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return <element />;
   }
 }
@@ -127,7 +127,7 @@ final class TestAsynchronousUserElementWithWritableFlow
   protected async function composeAsync(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\WritableFlow>
       $_descendant_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element />;
   }
 }
@@ -144,7 +144,7 @@ final class TestSimpleUserElementWithWritableFlow
   protected function compose(
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\WritableFlow>
       $_descendant_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return <element />;
   }
 }
@@ -158,7 +158,7 @@ final class TestDissolvableUserElement
   }
 
   <<__Override>>
-  protected function compose(): SGMLStreamInterfaces\Streamable {
+  protected function compose()[]: SGMLStreamInterfaces\Streamable {
     return <element />;
   }
 }
@@ -176,7 +176,7 @@ final class TestAsynchronousElement extends SGMLStream\AsynchronousElement {
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
       $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element />;
   }
 }
@@ -191,7 +191,7 @@ final class TestDissolvableElement extends SGMLStream\DissolvableElement {
   <<__Override>>
   protected function render(
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return <element />;
   }
 }
@@ -211,7 +211,7 @@ final class TestAsynchronousElementWithSuccessorFlow
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow>
       $_successor_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element />;
   }
 }
@@ -229,7 +229,7 @@ final class TestSimpleElement extends SGMLStream\SimpleElement {
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\Flow>
       $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return <element />;
   }
 }
@@ -248,7 +248,7 @@ final class TestAsynchronousElementWithWritableFlow
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\WritableFlow>
       $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element />;
   }
 }
@@ -267,7 +267,7 @@ final class TestSimpleElementWithWritableFlow
     SGMLStreamInterfaces\Descendant<SGMLStreamInterfaces\WritableFlow>
       $_descendant_flow,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return <element />;
   }
 }
@@ -278,7 +278,7 @@ final class TestElementWithImpureInit extends SGMLStream\RootElement {
   private bool $canStillDoImpureThings = false;
 
   <<__Override>>
-  protected function init(): void {
+  protected function init()[defaults]: void {
     $this->canStillDoImpureThings = true;
   }
 
@@ -286,7 +286,7 @@ final class TestElementWithImpureInit extends SGMLStream\RootElement {
   public function placeIntoSnippetStream(
     SGMLStreamInterfaces\SnippetStream $stream,
     SGMLStreamInterfaces\Init<SGMLStreamInterfaces\Flow> $_init_flow,
-  ): void {
+  )[write_props]: void {
     $stream->addSafeSGML($this->canStillDoImpureThings ? 'pass' : 'fail');
   }
 }

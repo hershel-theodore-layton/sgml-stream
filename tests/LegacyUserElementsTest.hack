@@ -8,7 +8,7 @@ use type Facebook\HackTest\HackTest;
 
 final class LegacyUserElementsTest extends HackTest {
   public async function testLegacyElementsAreBackwardsCompatible(
-  ): Awaitable<void> {
+  )[defaults]: Awaitable<void> {
     $tree = <A><S><AW><SW><D><DumpFlow /></D></SW></AW></S></A>;
 
     $expected = '<element data-class="HTL\SGMLStream\Tests\A">'.
@@ -25,7 +25,7 @@ final class LegacyUserElementsTest extends HackTest {
 
   private static async function renderAsync(
     SGMLStreamInterfaces\Streamable $streamable,
-  ): Awaitable<string> {
+  )[defaults]: Awaitable<string> {
     $stream = new SGMLStream\ConcatenatingStream();
 
     $streamable->placeIntoSnippetStream(
@@ -47,7 +47,7 @@ final class S extends SGMLStream\SimpleUserElement {
   <<__Override>>
   protected function compose(
     SGMLStreamInterfaces\Flow $_flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
@@ -56,7 +56,7 @@ final class SW extends SGMLStream\SimpleUserElementWithWritableFlow {
   <<__Override>>
   protected function compose(
     SGMLStreamInterfaces\WritableFlow $flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[write_props]: SGMLStreamInterfaces\Streamable {
     $flow->assignVariable(static::class, 'SW wrote this');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
@@ -66,7 +66,7 @@ final class A extends SGMLStream\AsynchronousUserElement {
   <<__Override>>
   protected async function composeAsync(
     SGMLStreamInterfaces\Flow $_flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[]: Awaitable<SGMLStreamInterfaces\Streamable> {
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
@@ -75,7 +75,7 @@ final class AW extends SGMLStream\AsynchronousUserElementWithWritableFlow {
   <<__Override>>
   protected async function composeAsync(
     SGMLStreamInterfaces\WritableFlow $flow,
-  ): Awaitable<SGMLStreamInterfaces\Streamable> {
+  )[write_props]: Awaitable<SGMLStreamInterfaces\Streamable> {
     $flow->assignVariable(static::class, 'AW wrote this');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
@@ -83,7 +83,7 @@ final class AW extends SGMLStream\AsynchronousUserElementWithWritableFlow {
 
 final class D extends SGMLStream\DissolvableUserElement {
   <<__Override>>
-  protected function compose(): SGMLStreamInterfaces\Streamable {
+  protected function compose()[]: SGMLStreamInterfaces\Streamable {
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
@@ -92,7 +92,7 @@ final class DumpFlow extends SGMLStream\SimpleUserElement {
   <<__Override>>
   protected function compose(
     SGMLStreamInterfaces\Flow $flow,
-  ): SGMLStreamInterfaces\Streamable {
+  )[]: SGMLStreamInterfaces\Streamable {
     return
       <element data-class={static::class}>
         AW({$flow->get(AW::class) as ?\XHPChild})
