@@ -1,10 +1,10 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-use function Facebook\FBExpect\expect;
 use type Facebook\HackTest\HackTest;
 use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
 use type LogicException;
+use function HTL\Expect\{expect, expect_invoked};
 
 final class XhpInPureContextTest extends HackTest {
   public function test_constructing_the_built_in_xhp_elements_in_a_pure_context(
@@ -28,50 +28,44 @@ final class XhpInPureContextTest extends HackTest {
   }
 
   public function test_init_is_called_at_construction_time()[defaults]: void {
-    expect(() ==> <TestAsynchronousUserElement />)->toThrow(
-      LogicException::class,
-      'TestAsynchronousUserElement',
-    );
-    expect(() ==> <TestSimpleUserElement />)->toThrow(
-      LogicException::class,
-      'TestSimpleUserElement',
-    );
-    expect(() ==> <TestAsynchronousUserElementWithWritableFlow />)->toThrow(
-      LogicException::class,
-      'TestAsynchronousUserElementWithWritableFlow',
-    );
-    expect(() ==> <TestSimpleUserElementWithWritableFlow />)->toThrow(
-      LogicException::class,
-      'TestSimpleUserElementWithWritableFlow',
-    );
-    expect(() ==> <TestDissolvableUserElement />)->toThrow(
-      LogicException::class,
-      'TestDissolvableUserElement',
-    );
-    expect(() ==> <TestAsynchronousElement />)->toThrow(
-      LogicException::class,
-      'TestAsynchronousElement',
-    );
-    expect(() ==> <TestDissolvableElement />)->toThrow(
-      LogicException::class,
-      'TestDissolvableElement',
-    );
-    expect(() ==> <TestAsynchronousElementWithSuccessorFlow />)->toThrow(
-      LogicException::class,
-      'TestAsynchronousElementWithSuccessorFlow',
-    );
-    expect(() ==> <TestSimpleElement />)->toThrow(
-      LogicException::class,
+    expect_invoked(() ==> <TestAsynchronousUserElement />)->toHaveThrown<
+      LogicException,
+    >('TestAsynchronousUserElement');
+    expect_invoked(() ==> <TestSimpleUserElement />)->toHaveThrown<
+      LogicException,
+    >('TestSimpleUserElement');
+    expect_invoked(() ==> <TestAsynchronousUserElementWithWritableFlow />)
+      ->toHaveThrown<LogicException>(
+        'TestAsynchronousUserElementWithWritableFlow',
+      );
+    expect_invoked(() ==> <TestSimpleUserElementWithWritableFlow />)
+      ->toHaveThrown<LogicException>('TestSimpleUserElementWithWritableFlow');
+    expect_invoked(() ==> <TestDissolvableUserElement />)->toHaveThrown<
+      LogicException,
+    >('TestDissolvableUserElement');
+    expect_invoked(() ==> <TestAsynchronousElement />)->toHaveThrown<
+      LogicException,
+    >('TestAsynchronousElement');
+    expect_invoked(() ==> <TestDissolvableElement />)->toHaveThrown<
+      LogicException,
+    >('TestDissolvableElement');
+    expect_invoked(() ==> <TestAsynchronousElementWithSuccessorFlow />)
+      ->toHaveThrown<LogicException>(
+
+        'TestAsynchronousElementWithSuccessorFlow',
+      );
+    expect_invoked(() ==> <TestSimpleElement />)->toHaveThrown<LogicException>(
+
       'TestSimpleElement',
     );
-    expect(() ==> <TestAsynchronousElementWithWritableFlow />)->toThrow(
-      LogicException::class,
-      'TestAsynchronousElementWithWritableFlow',
-    );
-    expect(() ==> <TestSimpleElementWithWritableFlow />)->toThrow(
-      LogicException::class,
-      'TestSimpleElementWithWritableFlow',
-    );
+    expect_invoked(() ==> <TestAsynchronousElementWithWritableFlow />)
+      ->toHaveThrown<LogicException>(
+
+        'TestAsynchronousElementWithWritableFlow',
+      );
+    expect_invoked(() ==> <TestSimpleElementWithWritableFlow />)->toHaveThrown<
+      LogicException,
+    >('TestSimpleElementWithWritableFlow');
   }
 
   public async function test_can_still_use_an_impure_init_if_need_be_async(

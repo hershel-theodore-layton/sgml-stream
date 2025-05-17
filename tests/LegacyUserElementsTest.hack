@@ -2,7 +2,7 @@
 namespace HTL\SGMLStream\Tests;
 
 use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
-use function Facebook\FBExpect\expect;
+use function HTL\Expect\expect;
 
 use type Facebook\HackTest\HackTest;
 

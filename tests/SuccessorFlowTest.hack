@@ -4,7 +4,7 @@ namespace HTL\SGMLStream\Tests;
 use namespace HH\Asio;
 use namespace HH\Lib\Vec;
 use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
-use function Facebook\FBExpect\expect;
+use function HTL\Expect\{expect, expect_invoked};
 use function clock_gettime_ns;
 use const CLOCK_MONOTONIC;
 
@@ -38,9 +38,8 @@ final class SuccessorFlowTest extends HackTest {
     $successor_flow->assignVariable('a', 'b');
     $successor_flow->makeCopyForChild();
     // And only now it is copied.
-    expect(() ==> $successor_flow->assignVariable('b', 'c'))->toThrow(
-      InvariantException::class,
-    );
+    expect_invoked(() ==> $successor_flow->assignVariable('b', 'c'))
+      ->toHaveThrown<InvariantException>();
   }
 
   public async function testCanOnlyObservePredecessorData(

@@ -1,9 +1,9 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-use function Facebook\FBExpect\expect;
 use type Facebook\HackTest\HackTest;
 use namespace HTL\SGMLStream;
+use function HTL\Expect\expect;
 use type Stringish;
 
 final class StringishAttributeTest extends HackTest {

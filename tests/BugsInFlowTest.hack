@@ -1,9 +1,9 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-use function Facebook\FBExpect\expect;
 use type HTL\SGMLStream\{ExclamationConstFlow, FirstComeFirstServedFlow};
 use type HTL\SGMLStreamInterfaces\RedeclaredConstantException;
+use function HTL\Expect\{expect, expect_invoked};
 
 use type Facebook\HackTest\HackTest;
 
@@ -29,12 +29,12 @@ final class BugsInFlowTest extends HackTest {
 
   public function test_first_come_first_served_flow_does_not_permit_constant_overriding_in_the_constructor(
   )[defaults]: void {
-    expect(
+    expect_invoked(
       () ==> FirstComeFirstServedFlow::createWithConstantsAndVariables(
         dict['one' => true],
         dict['one' => false],
       ),
-    )->toThrow(RedeclaredConstantException::class);
+    )->toHaveThrown<RedeclaredConstantException>();
   }
 
   public function test_first_come_first_served_flow_declare_constant_exception_mentions_the_correct_storage_type(
@@ -44,14 +44,12 @@ final class BugsInFlowTest extends HackTest {
       dict['var' => false],
     );
 
-    expect(() ==> $flow->declareConstant('const', false))->toThrow(
-      RedeclaredConstantException::class,
-      'constant with the name',
-    );
+    expect_invoked(() ==> $flow->declareConstant('const', false))->toHaveThrown<
+      RedeclaredConstantException,
+    >('constant with the name');
 
-    expect(() ==> $flow->declareConstant('var', false))->toThrow(
-      RedeclaredConstantException::class,
-      'variable with the name',
-    );
+    expect_invoked(() ==> $flow->declareConstant('var', false))->toHaveThrown<
+      RedeclaredConstantException,
+    >('variable with the name');
   }
 }
