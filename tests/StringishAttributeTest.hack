@@ -1,25 +1,33 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-use type Facebook\HackTest\HackTest;
-use namespace HTL\SGMLStream;
+use namespace HTL\{SGMLStream, TestChain};
 use function HTL\Expect\expect;
 use type Stringish;
 
-final class StringishAttributeTest extends HackTest {
-  public async function test_render_a_string_async(
-  )[defaults]: Awaitable<void> {
-    $lt = '<';
-    expect(await (<StringishAttribute stringish={$lt} />)->toHTMLStringAsync())
-      ->toEqual('<example stringish="&lt;">');
-  }
-
-  public async function test_render_a_stringish_object_async(
-  )[defaults]: Awaitable<void> {
-    $lt = '<';
-    expect(await (<StringishAttribute stringish={$lt} />)->toHTMLStringAsync())
-      ->toEqual('<example stringish="&lt;">');
-  }
+<<TestChain\Discover>>
+function stringish_attribute_test(TestChain\Chain $chain)[]: TestChain\Chain {
+  return $chain->group(__FUNCTION__)
+    ->testAsync(
+      'test_render_a_string_async',
+      async ()[defaults] ==> {
+        $lt = '<';
+        expect(
+          await (<StringishAttribute stringish={$lt} />)->toHTMLStringAsync(),
+        )
+          ->toEqual('<example stringish="&lt;">');
+      },
+    )
+    ->testAsync(
+      'test_render_a_stringish_object_async',
+      async ()[defaults] ==> {
+        $lt = '<';
+        expect(
+          await (<StringishAttribute stringish={$lt} />)->toHTMLStringAsync(),
+        )
+          ->toEqual('<example stringish="&lt;">');
+      },
+    );
 }
 
 final class StringishAttribute extends SGMLStream\RootElement {

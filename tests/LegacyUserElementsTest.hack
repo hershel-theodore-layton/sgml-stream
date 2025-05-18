@@ -1,46 +1,48 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
+use namespace HTL\{SGMLStream, SGMLStreamInterfaces, TestChain};
 use function HTL\Expect\expect;
 
-use type Facebook\HackTest\HackTest;
+<<TestChain\Discover>>
+function legacy_user_elements_test(TestChain\Chain $chain)[]: TestChain\Chain {
+  return $chain->group(__FUNCTION__)
+    ->testAsync(
+      'testLegacyElementsAreBackwardsCompatible',
+      async ()[defaults] ==> {
+        $tree = <A><S><AW><SW><D><DumpFlow /></D></SW></AW></S></A>;
 
-final class LegacyUserElementsTest extends HackTest {
-  public async function testLegacyElementsAreBackwardsCompatible(
-  )[defaults]: Awaitable<void> {
-    $tree = <A><S><AW><SW><D><DumpFlow /></D></SW></AW></S></A>;
+        $expected = '<element data-class="HTL\SGMLStream\Tests\A">'.
+          '<element data-class="HTL\SGMLStream\Tests\S">'.
+          '<element data-class="HTL\SGMLStream\Tests\AW">'.
+          '<element data-class="HTL\SGMLStream\Tests\SW">'.
+          '<element data-class="HTL\SGMLStream\Tests\D">'.
+          '<element data-class="HTL\SGMLStream\Tests\DumpFlow">'.
+          ' AW(AW wrote this) SW(SW wrote this) '.
+          '</element></element></element></element></element></element>';
 
-    $expected = '<element data-class="HTL\SGMLStream\Tests\A">'.
-      '<element data-class="HTL\SGMLStream\Tests\S">'.
-      '<element data-class="HTL\SGMLStream\Tests\AW">'.
-      '<element data-class="HTL\SGMLStream\Tests\SW">'.
-      '<element data-class="HTL\SGMLStream\Tests\D">'.
-      '<element data-class="HTL\SGMLStream\Tests\DumpFlow">'.
-      ' AW(AW wrote this) SW(SW wrote this) '.
-      '</element></element></element></element></element></element>';
-
-    expect(await static::renderAsync($tree))->toEqual($expected);
-  }
-
-  private static async function renderAsync(
-    SGMLStreamInterfaces\Streamable $streamable,
-  )[defaults]: Awaitable<string> {
-    $stream = new SGMLStream\ConcatenatingStream();
-
-    $streamable->placeIntoSnippetStream(
-      $stream,
-      SGMLStream\FirstComeFirstServedFlow::createEmpty(),
+        expect(await render_async($tree))->toEqual($expected);
+      },
     );
+}
 
-    $renderer = new SGMLStream\ConcurrentSingleUseRenderer($stream);
-    $consumer = new SGMLStream\ToStringConsumer();
-    await $renderer->renderAsync(
-      $consumer,
-      SGMLStream\FirstComeFirstServedFlow::createEmpty(),
-    );
-    return $consumer->toString();
-  }
+async function render_async(
+  SGMLStreamInterfaces\Streamable $streamable,
+)[defaults]: Awaitable<string> {
+  $stream = new SGMLStream\ConcatenatingStream();
+
+  $streamable->placeIntoSnippetStream(
+    $stream,
+    SGMLStream\FirstComeFirstServedFlow::createEmpty(),
+  );
+
+  $renderer = new SGMLStream\ConcurrentSingleUseRenderer($stream);
+  $consumer = new SGMLStream\ToStringConsumer();
+  await $renderer->renderAsync(
+    $consumer,
+    SGMLStream\FirstComeFirstServedFlow::createEmpty(),
+  );
+  return $consumer->toString();
 }
 
 final class S extends SGMLStream\SimpleUserElement {

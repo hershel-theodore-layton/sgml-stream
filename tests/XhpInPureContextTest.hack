@@ -1,79 +1,82 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-use type Facebook\HackTest\HackTest;
-use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
+use namespace HTL\{SGMLStream, SGMLStreamInterfaces, TestChain};
 use type LogicException;
 use function HTL\Expect\{expect, expect_invoked};
 
-final class XhpInPureContextTest extends HackTest {
-  public function test_constructing_the_built_in_xhp_elements_in_a_pure_context(
-  )[]: void {
-    try {
-      $_ = <element />;
-      $_ = <TestAsynchronousUserElement />;
-      $_ = <TestSimpleUserElement />;
-      $_ = <TestAsynchronousUserElementWithWritableFlow />;
-      $_ = <TestSimpleUserElementWithWritableFlow />;
-      $_ = <TestDissolvableUserElement />;
-      $_ = <TestAsynchronousElement />;
-      $_ = <TestDissolvableElement />;
-      $_ = <TestAsynchronousElementWithSuccessorFlow />;
-      $_ = <TestSimpleElement />;
-      $_ = <TestAsynchronousElementWithWritableFlow />;
-      $_ = <TestSimpleElementWithWritableFlow />;
-    } catch (LogicException $_) {
-      // This is not testing runtime behavior, but the typechecker behavior.
-    }
-  }
+<<TestChain\Discover>>
+function xhp_in_pure_context_test(TestChain\Chain $chain)[]: TestChain\Chain {
+  return $chain->group(__FUNCTION__)
+    ->test(
+      'test_constructing_the_built_in_xhp_elements_in_a_pure_context',
+      () ==> {
+        try {
+          $_ = <element />;
+          $_ = <TestAsynchronousUserElement />;
+          $_ = <TestSimpleUserElement />;
+          $_ = <TestAsynchronousUserElementWithWritableFlow />;
+          $_ = <TestSimpleUserElementWithWritableFlow />;
+          $_ = <TestDissolvableUserElement />;
+          $_ = <TestAsynchronousElement />;
+          $_ = <TestDissolvableElement />;
+          $_ = <TestAsynchronousElementWithSuccessorFlow />;
+          $_ = <TestSimpleElement />;
+          $_ = <TestAsynchronousElementWithWritableFlow />;
+          $_ = <TestSimpleElementWithWritableFlow />;
+        } catch (LogicException $_) {
+          // This is not testing runtime behavior, but the typechecker behavior.
+        }
+      },
+    )
+    ->test('test_init_is_called_at_construction_time', ()[defaults] ==> {
+      expect_invoked(() ==> <TestAsynchronousUserElement />)->toHaveThrown<
+        LogicException,
+      >('TestAsynchronousUserElement');
+      expect_invoked(() ==> <TestSimpleUserElement />)->toHaveThrown<
+        LogicException,
+      >('TestSimpleUserElement');
+      expect_invoked(() ==> <TestAsynchronousUserElementWithWritableFlow />)
+        ->toHaveThrown<LogicException>(
+          'TestAsynchronousUserElementWithWritableFlow',
+        );
+      expect_invoked(() ==> <TestSimpleUserElementWithWritableFlow />)
+        ->toHaveThrown<LogicException>('TestSimpleUserElementWithWritableFlow');
+      expect_invoked(() ==> <TestDissolvableUserElement />)->toHaveThrown<
+        LogicException,
+      >('TestDissolvableUserElement');
+      expect_invoked(() ==> <TestAsynchronousElement />)->toHaveThrown<
+        LogicException,
+      >('TestAsynchronousElement');
+      expect_invoked(() ==> <TestDissolvableElement />)->toHaveThrown<
+        LogicException,
+      >('TestDissolvableElement');
+      expect_invoked(() ==> <TestAsynchronousElementWithSuccessorFlow />)
+        ->toHaveThrown<LogicException>(
 
-  public function test_init_is_called_at_construction_time()[defaults]: void {
-    expect_invoked(() ==> <TestAsynchronousUserElement />)->toHaveThrown<
-      LogicException,
-    >('TestAsynchronousUserElement');
-    expect_invoked(() ==> <TestSimpleUserElement />)->toHaveThrown<
-      LogicException,
-    >('TestSimpleUserElement');
-    expect_invoked(() ==> <TestAsynchronousUserElementWithWritableFlow />)
-      ->toHaveThrown<LogicException>(
-        'TestAsynchronousUserElementWithWritableFlow',
+          'TestAsynchronousElementWithSuccessorFlow',
+        );
+      expect_invoked(() ==> <TestSimpleElement />)->toHaveThrown<
+        LogicException,
+      >(
+
+        'TestSimpleElement',
       );
-    expect_invoked(() ==> <TestSimpleUserElementWithWritableFlow />)
-      ->toHaveThrown<LogicException>('TestSimpleUserElementWithWritableFlow');
-    expect_invoked(() ==> <TestDissolvableUserElement />)->toHaveThrown<
-      LogicException,
-    >('TestDissolvableUserElement');
-    expect_invoked(() ==> <TestAsynchronousElement />)->toHaveThrown<
-      LogicException,
-    >('TestAsynchronousElement');
-    expect_invoked(() ==> <TestDissolvableElement />)->toHaveThrown<
-      LogicException,
-    >('TestDissolvableElement');
-    expect_invoked(() ==> <TestAsynchronousElementWithSuccessorFlow />)
-      ->toHaveThrown<LogicException>(
+      expect_invoked(() ==> <TestAsynchronousElementWithWritableFlow />)
+        ->toHaveThrown<LogicException>(
 
-        'TestAsynchronousElementWithSuccessorFlow',
-      );
-    expect_invoked(() ==> <TestSimpleElement />)->toHaveThrown<LogicException>(
-
-      'TestSimpleElement',
+          'TestAsynchronousElementWithWritableFlow',
+        );
+      expect_invoked(() ==> <TestSimpleElementWithWritableFlow />)
+        ->toHaveThrown<LogicException>('TestSimpleElementWithWritableFlow');
+    })
+    ->testAsync(
+      'test_can_still_use_an_impure_init_if_need_be_async',
+      async ()[defaults] ==> {
+        expect(await (<TestElementWithImpureInit />)->toHTMLStringAsync())
+          ->toEqual('pass');
+      },
     );
-    expect_invoked(() ==> <TestAsynchronousElementWithWritableFlow />)
-      ->toHaveThrown<LogicException>(
-
-        'TestAsynchronousElementWithWritableFlow',
-      );
-    expect_invoked(() ==> <TestSimpleElementWithWritableFlow />)->toHaveThrown<
-      LogicException,
-    >('TestSimpleElementWithWritableFlow');
-  }
-
-  public async function test_can_still_use_an_impure_init_if_need_be_async(
-  )[defaults]: Awaitable<void> {
-    expect(await (<TestElementWithImpureInit />)->toHTMLStringAsync())->toEqual(
-      'pass',
-    );
-  }
 }
 
 final class TestAsynchronousUserElement
