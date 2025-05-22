@@ -1,7 +1,8 @@
 {
-  "chain_path": "test-chain/chain.hack",
-  "codegen_namespace": "HTL\\Project_uN8Tv71L8o0F\\GeneratedTestChain",
-  "license_comment": "/** sgml-stream is MIT licensed, see /LICENSE. */",
-  "run_file": "run.hack",
-  "test_dir": "tests"
+    "chain_path": "tests/test-chain/chain.hack",
+    "chain_type": "\\HTL\\TestChain\\Chain",
+    "codegen_namespace": "HTL\\Project_uN8Tv71L8o0F\\GeneratedTestChain",
+    "license_comment": "/** sgml-stream is MIT licensed, see /LICENSE. */",
+    "run_file": "tests/test-chain/run.hack",
+    "test_dir": "tests"
 }

@@ -3,12 +3,17 @@ namespace HTL\Project_uN8Tv71L8o0F\GeneratedTestChain;
 
 use namespace HH;
 use namespace HH\Lib\{IO, Vec};
+use namespace HTL\TestChain;
 
+// The initial stub was generated with vendor/bin/test-chain.
+// It is now yours to edit and customize.
 <<__DynamicallyCallable, __EntryPoint>>
 async function run_tests_async()[defaults]: Awaitable<void> {
   $_argv = HH\global_get('argv') as Container<_>
     |> Vec\map($$, $x ==> $x as string);
-  $tests = await tests_async();
+  $tests = await tests_async(
+    TestChain\ChainController::create(TestChain\TestChain::create<>)
+  );
   $result = await $tests
     ->withParallelGroupExecution()
     ->runAllAsync($tests->getBasicProgressReporter());
@@ -17,9 +22,8 @@ async function run_tests_async()[defaults]: Awaitable<void> {
   if ($result->isSuccess()) {
     await $output->writeAllAsync("\nNo errors!\n");
     return;
-  } else {
-    await $output->writeAllAsync("\nTests failed!\n");
   }
 
+  await $output->writeAllAsync("\nTests failed!\n");
   exit(1);
 }
