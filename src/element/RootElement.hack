@@ -110,8 +110,8 @@ abstract xhp class RootElement
    */
   <<SGMLStreamInterfaces\HHVMSignature('attribute string alt = ""')>>
   protected static function __xhpAttributeDeclaration(
-  )[]: dict<string, varray<mixed>> {
-    return dict[];
+  )[]: AnyArray<string, varray<mixed>> {
+    return HH4Shim\array_to_shape(dict[]) as AnyArray<_, _>;
   }
 
   private function appendXHPChildren(
