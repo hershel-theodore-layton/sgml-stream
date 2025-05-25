@@ -2,7 +2,7 @@
 namespace HTL\SGMLStream;
 
 use namespace HH\Lib\{C, Str};
-use namespace HTL\SGMLStreamInterfaces;
+use namespace HTL\{HH4Shim, SGMLStreamInterfaces};
 use type XHPChild;
 
 abstract xhp class RootElement
