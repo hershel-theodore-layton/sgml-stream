@@ -162,7 +162,8 @@ abstract xhp class RootElement
     $attributes = dict[];
     $data_and_aria = dict[];
     foreach (static::__xhpAttributeDeclaration() as $key => $info) {
-      invariant($info is AnyArray<_, _>, 'This value shuold have been vecish');
+      invariant($key is string, 'This value should have been a string');
+      invariant($info is AnyArray<_, _>, 'This value should have been vecish');
       $value = $info[2];
       if ($value is nonnull) {
         if (self::isDataOrAria($key)) {
