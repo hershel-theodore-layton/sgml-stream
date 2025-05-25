@@ -2,7 +2,7 @@
 namespace HTL\SGMLStream;
 
 use namespace HH\Lib\{C, Str};
-use namespace HTL\SGMLStreamInterfaces;
+use namespace HTL\{HH4Shim, SGMLStreamInterfaces};
 
 trait ElementWithOpenAndCloseTagsAndUnescapedContent {
   require extends RootElement;
@@ -41,7 +41,7 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
     );
 
     if ($child_count === 1) {
-      $child = $children[0];
+      $child = HH4Shim\to_mixed($children[0]);
       invariant(
         $child is string,
         '%s may only have one child and its type must be string',

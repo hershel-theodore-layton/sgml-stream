@@ -56,16 +56,16 @@ abstract xhp class RootElement
     return $consumer->toString();
   }
 
-  final protected function getChildren()[]: vec<XHPChild> {
+  final public function getChildren()[]: vec<XHPChild> {
     return $this->children;
   }
 
-  final protected function getDataAndAriaAttributes(
+  final public function getDataAndAriaAttributes(
   )[]: dict<string, arraykey> {
     return $this->dataAndAria;
   }
 
-  final protected function getDeclaredAttributes()[]: dict<string, nonnull> {
+  final public function getDeclaredAttributes()[]: dict<string, nonnull> {
     return $this->attributes;
   }
 
@@ -110,8 +110,8 @@ abstract xhp class RootElement
    */
   <<SGMLStreamInterfaces\HHVMSignature('attribute string alt = ""')>>
   protected static function __xhpAttributeDeclaration(
-  )[]: darray<string, varray<mixed>> {
-    return darray[];
+  )[]: dict<string, varray<mixed>> {
+    return dict[];
   }
 
   private function appendXHPChildren(
