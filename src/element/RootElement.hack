@@ -110,8 +110,8 @@ abstract xhp class RootElement
    */
   <<SGMLStreamInterfaces\HHVMSignature('attribute string alt = ""')>>
   protected static function __xhpAttributeDeclaration(
-  )[]: AnyArray<arraykey, mixed> {
-    return HH4Shim\array_to_shape(dict[]) as AnyArray<_, _>;
+  )[]: AnyArray<string, AnyArray<int, mixed>> {
+    return HH4Shim\downgrade_dictish(dict[]);
   }
 
   private function appendXHPChildren(
@@ -162,8 +162,6 @@ abstract xhp class RootElement
     $attributes = dict[];
     $data_and_aria = dict[];
     foreach (static::__xhpAttributeDeclaration() as $key => $info) {
-      invariant($key is string, 'This value should have been a string');
-      invariant($info is AnyArray<_, _>, 'This value should have been vecish');
       $value = $info[2];
       if ($value is nonnull) {
         if (self::isDataOrAria($key)) {
