@@ -1,0 +1,12 @@
+services:
+  hhvm:
+    container_name: theodore-sgml-stream-container
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - type: bind
+        source: .
+        target: /mnt/project
+    ports:
+      - 48554:10641
