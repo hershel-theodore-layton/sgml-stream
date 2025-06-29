@@ -99,7 +99,7 @@ final class Immediate extends SGMLStream\SimpleElement {
   <<__Override>>
   public function processSuccessorFlow(
     SGMLStreamInterfaces\Successor<SGMLStreamInterfaces\WritableFlow> $flow,
-  )[leak_safe]: void {
+  )[defaults]: void {
     $flow->declareConstant(
       '!'.$this->:number,
       clock_gettime_ns(CLOCK_MONOTONIC),

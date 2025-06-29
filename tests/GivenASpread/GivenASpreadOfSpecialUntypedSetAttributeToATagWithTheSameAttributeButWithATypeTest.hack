@@ -7,7 +7,7 @@ use function HTL\Expect\expect;
 <<TestChain\Discover>>
 function given_a_spread_of_special_untyped_set_attribute_to_a_tag_with_the_same_attribute_but_with_a_type_test(
   TestChain\Chain $chain,
-)[leak_safe]: TestChain\Chain {
+)[defaults]: TestChain\Chain {
   return $chain->group(__FUNCTION__)
     ->test(
       'test_the_explicitly_set_value_is_spread_even_though_this_might_set_a_value_of_a_different_type',
