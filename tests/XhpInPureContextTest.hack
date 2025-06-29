@@ -29,7 +29,7 @@ function xhp_in_pure_context_test(TestChain\Chain $chain)[]: TestChain\Chain {
         }
       },
     )
-    ->test('test_init_is_called_at_construction_time', ()[defaults] ==> {
+    ->test('test_init_is_called_at_construction_time', () ==> {
       expect_invoked(() ==> <TestAsynchronousUserElement />)->toHaveThrown<
         LogicException,
       >('TestAsynchronousUserElement');

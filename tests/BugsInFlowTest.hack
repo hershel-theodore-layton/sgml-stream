@@ -11,7 +11,7 @@ function bugs_in_flow_test(TestChain\Chain $chain)[]: TestChain\Chain {
   return $chain->group(__FUNCTION__)
     ->test(
       'test_exclamation_const_flow_can_be_constructed_with_variables',
-      ()[defaults]: void ==> {
+      (): void ==> {
         $flow = ExclamationConstFlow::createWithConstantsAndVariables(
           dict['!const' => 'c'],
           dict['var' => 'v'],
@@ -23,7 +23,7 @@ function bugs_in_flow_test(TestChain\Chain $chain)[]: TestChain\Chain {
 
     ->test(
       'test_first_come_first_served_flow_can_getx_a_null_constant',
-      ()[defaults]: void ==> {
+      (): void ==> {
         $flow = FirstComeFirstServedFlow::createWithConstantsAndVariables(
           dict['nullable' => null],
           dict[],
@@ -34,7 +34,7 @@ function bugs_in_flow_test(TestChain\Chain $chain)[]: TestChain\Chain {
 
     ->test(
       'test_first_come_first_served_flow_does_not_permit_constant_overriding_in_the_constructor',
-      ()[defaults]: void ==> {
+      (): void ==> {
         expect_invoked(
           () ==> FirstComeFirstServedFlow::createWithConstantsAndVariables(
             dict['one' => true],
@@ -46,7 +46,7 @@ function bugs_in_flow_test(TestChain\Chain $chain)[]: TestChain\Chain {
 
     ->test(
       'test_first_come_first_served_flow_declare_constant_exception_mentions_the_correct_storage_type',
-      ()[defaults]: void ==> {
+      ()[write_props]: void ==> {
         $flow = FirstComeFirstServedFlow::createWithConstantsAndVariables(
           dict['const' => true],
           dict['var' => false],
