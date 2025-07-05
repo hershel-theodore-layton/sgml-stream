@@ -84,7 +84,7 @@ final class TestAsynchronousUserElement
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -100,7 +100,7 @@ final class TestSimpleUserElement extends SGMLStream\SimpleUserElement {
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -117,7 +117,7 @@ final class TestAsynchronousUserElementWithWritableFlow
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -134,7 +134,7 @@ final class TestSimpleUserElementWithWritableFlow
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -151,7 +151,7 @@ final class TestDissolvableUserElement
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -165,7 +165,7 @@ final class TestAsynchronousElement extends SGMLStream\AsynchronousElement {
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -182,7 +182,7 @@ final class TestDissolvableElement extends SGMLStream\DissolvableElement {
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -198,7 +198,7 @@ final class TestAsynchronousElementWithSuccessorFlow
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -218,7 +218,7 @@ final class TestSimpleElement extends SGMLStream\SimpleElement {
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -237,7 +237,7 @@ final class TestAsynchronousElementWithWritableFlow
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>
@@ -256,7 +256,7 @@ final class TestSimpleElementWithWritableFlow
 
   <<__Override>>
   public function init()[]: void {
-    throw new LogicException(static::class);
+    throw new LogicException((string)static::class);
   }
 
   <<__Override>>

@@ -59,7 +59,7 @@ final class SW extends SGMLStream\SimpleUserElementWithWritableFlow {
   protected function compose(
     SGMLStreamInterfaces\WritableFlow $flow,
   )[write_props]: SGMLStreamInterfaces\Streamable {
-    $flow->assignVariable(static::class, 'SW wrote this');
+    $flow->assignVariable((string)static::class, 'SW wrote this');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
@@ -78,7 +78,7 @@ final class AW extends SGMLStream\AsynchronousUserElementWithWritableFlow {
   protected async function composeAsync(
     SGMLStreamInterfaces\WritableFlow $flow,
   )[write_props]: Awaitable<SGMLStreamInterfaces\Streamable> {
-    $flow->assignVariable(static::class, 'AW wrote this');
+    $flow->assignVariable((string)static::class, 'AW wrote this');
     return <element data-class={static::class}>{$this->getChildren()}</element>;
   }
 }
@@ -97,8 +97,8 @@ final class DumpFlow extends SGMLStream\SimpleUserElement {
   )[]: SGMLStreamInterfaces\Streamable {
     return
       <element data-class={static::class}>
-        AW({$flow->get(AW::class) as ?\XHPChild})
-        SW({$flow->get(SW::class) as ?\XHPChild})
+        AW({$flow->get((string)AW::class) as ?\XHPChild})
+        SW({$flow->get((string)SW::class) as ?\XHPChild})
       </element>;
   }
 }
