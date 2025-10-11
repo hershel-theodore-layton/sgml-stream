@@ -2,7 +2,7 @@
 namespace HTL\SGMLStream;
 
 use namespace HH\Lib\{C, Str};
-use namespace HTL\{HH4Shim, SGMLStreamInterfaces};
+use namespace HTL\SGMLStreamInterfaces;
 use type XHPChild;
 
 abstract xhp class RootElement
@@ -110,8 +110,8 @@ abstract xhp class RootElement
    */
   <<SGMLStreamInterfaces\HHVMSignature('attribute string alt = ""')>>
   protected static function __xhpAttributeDeclaration(
-  )[]: AnyArray<string, AnyArray<int, mixed>> {
-    return HH4Shim\downgrade_dictish(dict[]);
+  )[]: dict<string, dict<int, mixed>> {
+    return dict[];
   }
 
   private function appendXHPChildren(
