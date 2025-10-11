@@ -2,7 +2,7 @@
 namespace HTL\SGMLStream;
 
 use namespace HH\Lib\{C, Str};
-use namespace HTL\{HH4Shim, SGMLStreamInterfaces};
+use namespace HTL\SGMLStreamInterfaces;
 
 trait ElementWithOpenAndCloseTagsAndUnescapedContent {
   require extends RootElement;
