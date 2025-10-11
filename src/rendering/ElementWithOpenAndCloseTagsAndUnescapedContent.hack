@@ -41,7 +41,7 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
     );
 
     if ($child_count === 1) {
-      $child = HH4Shim\to_mixed($children[0]);
+      $child = $children[0];
       invariant(
         $child is string,
         '%s may only have one child and its type must be string',
