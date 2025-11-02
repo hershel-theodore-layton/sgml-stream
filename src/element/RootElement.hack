@@ -60,8 +60,7 @@ abstract xhp class RootElement
     return $this->children;
   }
 
-  final public function getDataAndAriaAttributes(
-  )[]: dict<string, arraykey> {
+  final public function getDataAndAriaAttributes()[]: dict<string, arraykey> {
     return $this->dataAndAria;
   }
 
@@ -275,7 +274,7 @@ abstract xhp class RootElement
   }
 
   private static function typeName(mixed $mixed)[]: string {
-    return \is_object($mixed) ? \get_class($mixed) : \gettype($mixed);
+    return \is_object($mixed) ? \get_class($mixed) : \gettype($mixed) as string;
   }
 
   private static function flattenChildren(
