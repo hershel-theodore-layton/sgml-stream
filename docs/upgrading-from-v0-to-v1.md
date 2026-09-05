@@ -1,14 +1,14 @@
 # Upgrading from v0 to v1
 
-_This document includes change from the sgml-stream-interfaces project and the sgml-stream project._
+_This document includes changes from the sgml-stream-interfaces project and the sgml-stream project._
 
 ## What's new?
 
-This release introduces three major features and a couple minor improvements.
+This release introduces three major features and a couple of minor improvements.
 
- - Access to an `Init<Flow>` in any element (including dissolvable element)!
+ - Access to an `Init<Flow>` in any element (including dissolvable elements)!
  - The new `Successor<Flow>` introduces a communication channel with successors!
- - `AsynchronousElementWithSuccessorFlow` render with the `Successor<Flow>`!
+ - `AsynchronousElementWithSuccessorFlow` renders with the `Successor<Flow>`!
 
 ---
 
@@ -18,9 +18,9 @@ This release introduces three major features and a couple minor improvements.
 
 ## Breaking changes
 
-**Almost all your code can remain unchanged!** This release includes the minimal amount of breaking changes. The impact of every change was carefully considered. Every breaking change was absolutely necessary to introduce new features `Init<Flow>` and `Successor<Flow>`.
+**Almost all your code can remain unchanged!** This release includes a minimal number of breaking changes. The impact of every change was carefully considered. Every breaking change was absolutely necessary to introduce new features `Init<Flow>` and `Successor<Flow>`.
 
-The **public** method `SnippetStream->streamOf()`, the **public** method `Streamable->placeIntoSnippetStream()`, the **final protected** method `RootElement->placeMyChildrenIntoSnippetStream()`, and the **final protected** method `RootElement->placeTraversableIntoSnippetStream()` the now take an `Init<Flow>` where it did not before. It would not have been possible to introduce the `Init<Flow>` feature without this change.
+The **public** method `SnippetStream->streamOf()`, the **public** method `Streamable->placeIntoSnippetStream()`, the **final protected** method `RootElement->placeMyChildrenIntoSnippetStream()`, and the **final protected** method `RootElement->placeTraversableIntoSnippetStream()` now take an `Init<Flow>` where they did not before. It would not have been possible to introduce the `Init<Flow>` feature without this change.
 
 ```DIFF
 // SnippetStream
@@ -51,7 +51,7 @@ final protected static function placeTraversableIntoSnippetStream(
 
 ---
 
-_These changes are unlikely to affect you. They affect the `Snippet` interface. Iff you created your own **direct** subclasses of `RootElement`, these will affect you._
+_These changes are unlikely to affect you. They affect the `Snippet` interface. If you created your own **direct** subclasses of `RootElement`, these will affect you._
 
 The **final** classes `AwaitableSnippet` and `ComposableSnippet` have undergone some changes.
 
@@ -116,13 +116,13 @@ The following methods have been removed from `RootElement`:
  - `public function __getChildrenDeclaration(): string`
  - `final public function __getChildrenDescription(): string`
 
-All these threw an `\Error` (which is not caught by `catch (\Exception $e)`) since the release of sgml-stream. Their functionality will not be missed, but their removal may create typechecker errors in otherwise dead code.
+All of these threw an `\Error` (which is not caught by `catch (\Exception $e)`) since the release of sgml-stream. Their functionality will not be missed, but their removal may create typechecker errors in otherwise dead code.
 
 ---
 
 ## Deprecations and upgrading
 
-The following six types have have been kept for backwards compatibility:
+The following six types have been kept for backwards compatibility:
 
  - `ConcurrentSingleUseRenderer` (the `Renderer` interface is deprecated)
  - `AsynchronousUserElement`
@@ -133,7 +133,7 @@ The following six types have have been kept for backwards compatibility:
 
 These element types don't get access to `Init<Flow>` nor `Successor<Flow>`. Doing so would break backwards compatibility. There is a new variant of each element type available. `PrefixUserElementSuffix` can be replaced with `PrefixElementSuffix`.
 
-If you use HHAST, you can run the migration found at [the sgml-stream github](https://github.com/hershel-theodore-layton/sgml-stream/blob/537a7dd956fc6946d5c4631ed311edafdbf7d912/tests/migrations). The output of this migration should be reviewed before committing the code. This migration upgrades `use type` clauses, `extends` clauses, adds a `use IgnoreSuccessorFlow` clause, it renames `compose()` / `composeAsync()`, and adds the `Flow $_init_flow` parameter.
+If you use HHAST, you can run the migration found at [the sgml-stream GitHub repository](https://github.com/hershel-theodore-layton/sgml-stream/blob/537a7dd956fc6946d5c4631ed311edafdbf7d912/tests/migrations). The output of this migration should be reviewed before committing the code. This migration upgrades `use type` clauses and `extends` clauses, adds a `use IgnoreSuccessorFlow` clause, renames `compose()` / `composeAsync()`, and adds the `Flow $_init_flow` parameter.
 
 You may have to manually change types from `Flow` to `Descendant<Flow>`, `Init<Flow>`, `Successor<Flow>` in your own code. A migration would not be able to infer how you are going to use this flow.
 

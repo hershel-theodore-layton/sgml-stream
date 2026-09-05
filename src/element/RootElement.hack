@@ -203,7 +203,7 @@ abstract xhp class RootElement
     // - Put the default values at the front.
     //   They can be overwritten by explicit values.
     // - If we get an explicit null, remove the attribute if it was set.
-    //   We don't want store nulls, since this would create an observable
+    //   We don't want to store nulls, since this would create an observable
     //   difference between an explicit null and something that was not set.
     // - Store `data-` and `aria-` in their own dict.
     //   Enforce that they must be arraykey, since we don't

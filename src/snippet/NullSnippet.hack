@@ -4,7 +4,7 @@ namespace HTL\SGMLStream;
 use namespace HTL\SGMLStreamInterfaces;
 
 /**
- * A noop snippet.
+ * A no-op snippet.
  */
 final class NullSnippet implements SGMLStreamInterfaces\Snippet {
   /**

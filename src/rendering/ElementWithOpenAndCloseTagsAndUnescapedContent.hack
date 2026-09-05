@@ -55,9 +55,9 @@ trait ElementWithOpenAndCloseTagsAndUnescapedContent {
       $closing_tag_prefix = '</'.static::TAG_NAME;
       // @see https://html.spec.whatwg.org/#script-data-state for script
       // @see https://html.spec.whatwg.org/#rawtext-state for style. Follow the
-      // the `<`, `/`, (ASCII alpha) parser flow. You'll end up here
+      // `<`, `/`, (ASCII alpha) parser flow. You'll end up at either
       // https://html.spec.whatwg.org/#script-data-end-tag-name-state or
-      // https://html.spec.whatwg.org/#rawtext-end-tag-name-state here.
+      // https://html.spec.whatwg.org/#rawtext-end-tag-name-state.
       // If this invariant does not protect against premature script data /
       // RAWTEXT end, please file a bug.
       invariant(

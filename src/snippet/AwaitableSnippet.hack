@@ -6,7 +6,7 @@ use namespace HTL\SGMLStreamInterfaces;
 use function HTL\Pragma\pragma;
 
 /**
- * Primes the snippets from the $impl as soon as it resolves. Will notify the
+ * Primes the snippets from the child function as soon as it resolves. Will notify the
  * Consumer during feedBytesToConsumerAsync if the Awaitable has not resolved
  * when feedBytesToConsumerAsync is called.
  */

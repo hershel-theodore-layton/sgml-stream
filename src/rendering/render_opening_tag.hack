@@ -17,9 +17,9 @@ function render_opening_tag(
       $out .= ' '.$key;
     } else {
       // `(string) $value` may cast a `StringishObject`.
-      // This has not been removed from hhvm just yet.
-      // `StringishObject` is supported in hhvm version 4.115 and above.
-      // When this cast starts failing at runtime, support for legacy hhvm
+      // This has not been removed from HHVM just yet.
+      // `StringishObject` is supported in HHVM version 4.115 and above.
+      // When this cast starts failing at runtime, support for legacy HHVM
       // versions will have to be dropped.
       $out .= ' '.$key.'="'.htmlspecialchars((string)$value).'"';
     }

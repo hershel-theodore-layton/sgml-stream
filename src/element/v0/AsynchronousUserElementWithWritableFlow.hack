@@ -6,7 +6,7 @@ use namespace HTL\SGMLStreamInterfaces;
 /**
  * @deprecated Kept for backwards compatibility with v0.x.
  *
- * Any `AsynchronousUserElementWithWriteableFlow` can be expressed as an
+ * Any `AsynchronousUserElementWithWritableFlow` can be expressed as an
  * `AsynchronousElementWithWritableFlow`.
  * Please consider using `AsynchronousElement` for new code.
  */

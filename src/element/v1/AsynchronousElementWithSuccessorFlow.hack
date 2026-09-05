@@ -14,7 +14,7 @@ use namespace HTL\SGMLStreamInterfaces;
  * predecessors have placed there. Your `->composeAsync()` call is delayed until
  * every predecessor has rendered and the content bytes that are emitted ahead
  * of your element have been consumed. You are guaranteed to observe every
- * write operation of your predecessors and the none of the write operations of
+ * write operation of your predecessors and none of the write operations of
  * your successors.
  *
  * This synchronization prevents a lot of useful concurrency. All asynchronous

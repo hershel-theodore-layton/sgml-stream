@@ -4,7 +4,7 @@ A streaming implementation of XHP for HHVM
 
 ## Alternative library
 
-This library is an alternative for [xhp-lib](https://github.com/facebook/xhp-lib). Xhp-lib has been open sourced by Facebook. If you have never used xhp before, you can find [general xhp documentation](https://docs.hhvm.com/hack/XHP/introduction) here. This information describes how xhp (the underlying technology below xhp-lib and sgml-stream) works. It will often explain things from the perspective of xhp-lib. If you have a general understanding of xhp and the basics of xhp-lib. You can find [sgml-stream specific documentation](https://github.com/hershel-theodore-layton/sgml-stream/blob/master/docs/index.md) here. It will also help if you have a basic understanding of [async and await](https://docs.hhvm.com/hack/asynchronous-operations/introduction) in Hack.
+This library is an alternative for [xhp-lib](https://github.com/facebook/xhp-lib). xhp-lib has been open-sourced by Facebook. If you have never used XHP before, you can find [general XHP documentation](https://docs.hhvm.com/hack/XHP/introduction) here. This information describes how XHP (the underlying technology below xhp-lib and sgml-stream) works. It will often explain things from the perspective of xhp-lib. If you have a general understanding of XHP and the basics of xhp-lib, you can find [sgml-stream-specific documentation](https://github.com/hershel-theodore-layton/sgml-stream/blob/master/docs/index.md) here. It will also help if you have a basic understanding of [async and await](https://docs.hhvm.com/hack/asynchronous-operations/introduction) in Hack.
 
 ## Heads-up
 
@@ -18,7 +18,7 @@ If you are reading this, v1.0 has been released. See the [upgrading guide](./doc
 
 ### Rendering model
 
-Xhp-lib is an amazing library which renders a tree of nodes, scalars, and xhp-lib specific interfaces to a string. Xhp-lib will manage coordination of Awaitables in your tree. Sgml-stream was born from the realization that xhp-lib, although be plenty fast, pushes back the time at which you can start sending content back in your http response. Xhp-lib renders trees of all the types into a tree of primitives first. Once that process completes, it turns this tree of primitives into a (long) string. Sgml-stream does things differently. Instead of returning your content as a string, we feed smaller partial strings to a Consumer. You are able to decide how and when you want to flush these smaller strings over the network.
+Xhp-lib is an amazing library which renders a tree of nodes, scalars, and xhp-lib-specific interfaces to a string. Xhp-lib will manage coordination of Awaitables in your tree. Sgml-stream was born from the realization that xhp-lib, although plenty fast, pushes back the time at which you can start sending content back in your HTTP response. Xhp-lib renders trees of all the types into a tree of primitives first. Once that process completes, it turns this tree of primitives into a (long) string. Sgml-stream does things differently. Instead of returning your content as a string, we feed smaller partial strings to a Consumer. You are able to decide how and when you want to flush these smaller strings over the network.
 
 Let's illustrate with the following example:
 
@@ -33,13 +33,13 @@ Let's illustrate with the following example:
 </html>
 ```
 
-When rendering this tree with xhp-lib, all Awaitables fire at once. Once all the Awaitables finish, your tree gets turned into a string and returned from `node->toStringAsync(): Awaitable<string>`. However, everything before element `a` does not depend on the Awaitable inside of `a` resolving. Wouldn't it be nice if you could already _stream_ this content to your users? They will discover required resources early and start loading your css immediately. As it turns out, `MyFastAsynchronousElement` renders itself to something that contains an image tag. So users would benefit greatly from getting this content as soon as possible. They could start downloading your image and get a _partially rendered_ page sooner. In this example, everything until and including `<body>` can be sent immediately. `a` can be sent as soon as it is ready. `b` can be sent once it is ready and `a` has also completed. As the element name suggests, `b` is rather slow, so it will finish after `a` and stream immediately. If element `c` is done, `b` is not yet ready. This means that we can't stream it yet and we have to wait for `b` to complete. To read more about how we  do this, see [Streams, how do they work?](./docs/streams-how-do-they-work.md).
+When rendering this tree with xhp-lib, all Awaitables fire at once. Once all the Awaitables finish, your tree gets turned into a string and returned from `node->toStringAsync(): Awaitable<string>`. However, everything before element `a` does not depend on the Awaitable inside `a` resolving. Wouldn't it be nice if you could already _stream_ this content to your users? They will discover required resources early and start loading your CSS immediately. As it turns out, `MyFastAsynchronousElement` renders itself to something that contains an image tag. So users would benefit greatly from getting this content as soon as possible. They could start downloading your image and get a _partially rendered_ page sooner. In this example, everything until and including `<body>` can be sent immediately. `a` can be sent as soon as it is ready. `b` can be sent once it is ready and `a` has also completed. As the element name suggests, `b` is rather slow, so it will finish after `a` and stream immediately. If element `c` is done, `b` is not yet ready. This means that we can't stream it yet and we have to wait for `b` to complete. To read more about how we do this, see [Streams, how do they work?](./docs/streams-how-do-they-work.md).
 
-### Contexts v.s. Flow
+### Contexts vs. Flow
 
-Xhp-lib has a concept called `contexts`. It is essentially a `dict<string, mixed>` which is managed by xhp-lib and available to you when `element->renderAsync()` is called. You can call `->getContext()` and `->setContext()` to store values and retrieve them later. Sgml-stream does not implement contexts. Contexts were to difficult to get right when after we changed the rendering model.
+Xhp-lib has a concept called `contexts`. It is essentially a `dict<string, mixed>` which is managed by xhp-lib and available to you when `element->renderAsync()` is called. You can call `->getContext()` and `->setContext()` to store values and retrieve them later. Sgml-stream does not implement contexts. Contexts were too difficult to get right after we changed the rendering model.
 
-Sgml-stream addresses this need in a different way. When your `SimpleElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Streamable` method is called, you get access to two Flows. The `$descendant_flow` is meant to fill the same role as xhp-lib's contexts. The `$init_flow` (and also the unmentioned `$successor_flow`) have no equivalents in xhp-lib. For a historical note about flows, [click here](#flows-in-version-zero). The flows explained in this readme are of the `Descendant<Flow>` kind. See [Flow kinds](./docs/flow-kinds.md)
+Sgml-stream addresses this need in a different way. When your `SimpleElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Streamable` method is called, you get access to two Flows. The `$descendant_flow` is meant to fill the same role as xhp-lib's contexts. The `$init_flow` (and also the unmentioned `$successor_flow`) have no equivalents in xhp-lib. For a historical note about flows, [click here](#flows-in-version-zero). The flows explained in this README are of the `Descendant<Flow>` kind. See [Flow kinds](./docs/flow-kinds.md).
 
 Flows support both constants and variables. The constant rules are relatively simple to explain. For a full explainer on Flow, including variables in flows, how variables and constants interact, and much more, see [Flow in depth](./docs/flow-in-depth.md).
 
@@ -69,19 +69,19 @@ Element `e` declares a constant named `C3`. `e` has no descendants, so `C3` is o
 
 ### Immutability
 
-Some may consider this a feature, others consider it a shortcoming of sgml-stream. Once an xhp open finishes. Which means that the `<a href="...">...</a>` object has been constructed, you can not modify the attributes, nor the children. This makes it easy to reason about the state of your xhp objects. `->appendChild()` and `->setAttribute()` (and friends) great tools when used correctly. We have been getting along fine without them, but there is a lot of xhp code out there that we do have visibility into. We might decide to weaken the immutability if enough issues for it get opened.  See [immutability why and how](./docs/immutability-why-and-how.md) for more information.
+Some may consider this a feature, while others consider it a shortcoming of sgml-stream. Once an XHP opening finishes, which means that the `<a href="...">...</a>` object has been constructed, you cannot modify the attributes or the children. This makes it easy to reason about the state of your XHP objects. `->appendChild()` and `->setAttribute()` (and friends) are great tools when used correctly. We have been getting along fine without them, but there is a lot of XHP code out there that we don't have visibility into. We might decide to weaken the immutability if enough issues are opened. See [immutability why and how](./docs/immutability-why-and-how.md) for more information.
 
 ## How to get started
 
-Sgml-stream does not come with any tags built-in. If you want to write html, you should also depend one or both of the following libraries:
+Sgml-stream does not come with any tags built-in. If you want to write HTML, you should also depend on one or both of the following libraries:
 
  - [html-stream-namespaced](https://github.com/hershel-theodore-layton/html-stream-namespaced)
  - [html-stream-non-namespaced](https://github.com/hershel-theodore-layton/html-stream-non-namespaced)
 
-They contain contain all the html tags from the [WhatWG HTML specification](https://html.spec.whatwg.org/multipage/). Xhp-lib comes with a couple more tags than those documented here. Namely: `<x:frag>`, `<doctype>`, `<conditional_comment>`, and some deprecated html tags. Here are some examples on how you could decide to implement them.
+They contain all the HTML tags from the [WHATWG HTML specification](https://html.spec.whatwg.org/multipage/). Xhp-lib comes with a couple more tags than those documented here. Namely: `<x:frag>`, `<doctype>`, `<conditional_comment>`, and some deprecated HTML tags. Here are some examples of how you could decide to implement them.
 
 ```HACK
-// This code is not checked by the typechecker.
+// This code is not checked by the type checker.
 // If this code does not work anymore, please open an issue or a PR.
 namespace MyOwnNamespace;
 
@@ -139,14 +139,14 @@ As you can see from these examples, you get access to a **dangerous** method on 
  - `AsynchronousElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
  - `AsynchronousElementWithWritableFlow->render(Descendant<WritableFlow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
 
-The `Flow`s are yours for as long as your Hack scope lasts. Either via `return` or `throw`. If you are `async`, the `Flow`s stay yours until your Awaitable resolves. Don't try to hold on to a Flows after that. If we implement more optimizations in the future, we will not consider it a BC break if your code behaves differently if you keep the `Flow`s around.
+The `Flow`s are yours for as long as your Hack scope lasts, either via `return` or `throw`. If you are `async`, the `Flow`s stay yours until your Awaitable resolves. Don't try to hold on to the `Flow`s after that. If we implement more optimizations in the future, we will not consider it a BC break if your code behaves differently if you keep the `Flow`s around.
 
 You return a `Streamable` from these methods. This will be an `Element` in most cases, but all other `Streamable`s are also valid. So you can construct a markdown renderer, and return that. As long as you implement the `Streamable` interface on your markdown renderer, sgml-stream will understand what to do.
 
 ### Unsafe strings
 A common question: _Why isn't a string Streamable?_
 
-Answer: Strings can not implement interfaces that are not in hhvm already (`XHPChild`, and the deprecated `Stringish` come to mind). If you have a string (pcdata) in your element's children, you don't need to do something special. We'll run it through `htmlspecialchars()` and stream it for you.
+Answer: Strings cannot implement interfaces that are not in HHVM already (`XHPChild` and the deprecated `Stringish` come to mind). If you have a string (PCDATA) in your element's children, you don't need to do something special. We'll run it through `htmlspecialchars()` and stream it for you.
 
 A common response: No, I want to stream the string, without escaping it. Please don't mess with my strings.
 
@@ -156,4 +156,4 @@ Sigh...: There is a way to get what you want, but be careful what you wish for. 
 
 _Historical note_
 
-For the longest time, when this library had version v0.x, there was only one `Flow` kind. This `Flow` has been renamed to `Descendant<Flow>` and is handed from ancestor to decendant. Since the release of `v1.0`, there are three types of flows. `Descendant<Flow>`, `Init<Flow>`, and `Successor<Flow>`. If you see a mention of `Flow` without a specific type, it is likely to be a `Descendant<Flow>`.
+For the longest time, when this library had version v0.x, there was only one `Flow` kind. This `Flow` has been renamed to `Descendant<Flow>` and is handed from ancestor to descendant. Since the release of `v1.0`, there are three types of flows: `Descendant<Flow>`, `Init<Flow>`, and `Successor<Flow>`. If you see a mention of `Flow` without a specific type, it is likely to be a `Descendant<Flow>`.

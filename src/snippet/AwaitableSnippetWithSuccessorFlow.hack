@@ -44,7 +44,7 @@ final class AwaitableSnippetWithSuccessorFlow
     $awaitable = ($this->childFunc)($descendant_flow, $successor_flow);
 
     // We can't start the childFunc earlier, because of the successor flow.
-    // This awaitable was started on the line above. So if there is any IO
+    // This awaitable was started on the line above. If there is any I/O,
     // the true branch is taken.
     if (!Asio\has_finished($awaitable)) {
       concurrent {

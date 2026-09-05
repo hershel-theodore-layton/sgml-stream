@@ -7,7 +7,7 @@ use namespace HTL\SGMLStreamInterfaces;
 /**
  * Used for wrapping Elements that don't implement
  * SGMLStreamInterfaces\Streamable and other subclasses of
- * SGMLStreamInterfaces\ToSGMLStringAsync. An empty string it optimized away and
+ * SGMLStreamInterfaces\ToSGMLStringAsync. An empty string is optimized away and
  * will not call the consumeAsync method on the Renderer. If the content is not
  * yet ready, the Renderer is notified.
  */

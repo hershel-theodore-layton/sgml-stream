@@ -9,7 +9,7 @@ final xhp class ex extends ... {
 }
 ```
 
-Then this look like this to the typechecker:
+Then this looks like this to the typechecker:
 ```HACK
 // pseudo syntax
 final xhp class ex extends ... {
@@ -21,7 +21,7 @@ Both xhp-lib and sgml-stream try _really hard_ to make your object behave like t
 
 ## Why is ->appendChild() gone?
 
-When we were using xhp-lib, `->appendChild()` got overused. The code became hard to read. We often took the time compact an xhp code path. Using `<div>{ $xhp_expression }</div>` we were able to remove many `->appendChild()` calls. We still use `->appendChild()`, but we've made it more inconvenient for ourselves. If we want to append to something, and it is in local scope, and it is a great benefit to code clarity, we do this.
+When we were using xhp-lib, `->appendChild()` got overused. The code became hard to read. We often took the time to compact an xhp code path. Using `<div>{ $xhp_expression }</div>` we were able to remove many `->appendChild()` calls. We still use `->appendChild()`, but we've made it more inconvenient for ourselves. If we want to append to something, and it is in local scope, and it is a great benefit to code clarity, we do this.
 
 ```HACK
 $append = <append />;
@@ -33,7 +33,7 @@ $append->appendChild(...);
 
 The name `<append />` makes it blindingly obvious that this element is going to have dynamic children set later. We let `$append` fall out of scope at the end of the function. If `$append` is handed away, we consider this to be bad practice.
 
-The `<append>` tag is no rocket science. It keeps a vec of `XHPChild` internally and streams them when asked. If you are migrating from xhp-lib to sgml-stream, this class can help migrate older code that can't easily be rewritten without it `->appendChild()`.
+The `<append>` tag is no rocket science. It keeps a vec of `XHPChild` internally and streams them when asked. If you are migrating from xhp-lib to sgml-stream, this class can help migrate older code that can't easily be rewritten without using `->appendChild()`.
 
 ## Possible changes to sgml-stream
 

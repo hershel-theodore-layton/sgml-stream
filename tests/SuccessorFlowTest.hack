@@ -31,7 +31,7 @@ function successor_flow_test(TestChain\Chain $chain)[]: TestChain\Chain {
         expect($successor_flow->getx('!mutable_vec') as MutableVecOfInt->value)
           ->toEqual(Vec\range(1, 7));
 
-        // We did indeed stall some time for the following Immediates.
+        // We did indeed stall for some time for the following Immediates.
         expect($successor_flow->getx('Asio\\usleep(42)') as int)
           ->toBeGreaterThan(41000);
 

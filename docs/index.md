@@ -9,13 +9,12 @@ _This documentation is written for those who have a general understanding of xhp
 ## Concepts
 
  - [Flow in depth](./flow-in-depth.md)
- - [Flow kinds](./docs/flow-kinds.md)
+ - [Flow kinds](./flow-kinds.md)
 
-## Peaking under the hood
+## Peeking under the hood
 
  - [Streams, how do they work?](./streams-how-do-they-work.md)
 
 ## Design decisions
 
  - [Immutability, why and how?](./immutability-why-and-how.md)
- 
