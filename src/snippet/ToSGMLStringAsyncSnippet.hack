@@ -3,6 +3,7 @@ namespace HTL\SGMLStream;
 
 use namespace HH\Asio;
 use namespace HTL\SGMLStreamInterfaces;
+use type Throwable;
 
 /**
  * Used for wrapping Elements that don't implement
@@ -13,7 +14,7 @@ use namespace HTL\SGMLStreamInterfaces;
  */
 final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
   private ?Awaitable<string> $stringAwaitable;
-  private ?\Throwable $caughtThrowable;
+  private ?Throwable $caughtThrowable;
 
   public function __construct(
     private SGMLStreamInterfaces\ToSGMLStringAsync $toSGMLStringAsync,
@@ -25,7 +26,7 @@ final class ToSGMLStringAsyncSnippet implements SGMLStreamInterfaces\Snippet {
     try {
       $this->stringAwaitable = $this->toSGMLStringAsync->toHTMLStringAsync();
       await $this->stringAwaitable;
-    } catch (\Throwable $t) {
+    } catch (Throwable $t) {
       $this->caughtThrowable = $t;
     }
   }

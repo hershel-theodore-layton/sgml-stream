@@ -1,9 +1,9 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-use type HTL\SGMLStream\{ExclamationConstFlow, FirstComeFirstServedFlow};
-use type HTL\SGMLStreamInterfaces\RedeclaredConstantException;
 use namespace HTL\TestChain;
+use type HTL\SGMLStreamInterfaces\RedeclaredConstantException;
+use type HTL\SGMLStream\{ExclamationConstFlow, FirstComeFirstServedFlow};
 use function HTL\Expect\{expect, expect_invoked};
 
 <<TestChain\Discover>>

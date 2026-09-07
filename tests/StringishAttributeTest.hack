@@ -2,8 +2,8 @@
 namespace HTL\SGMLStream\Tests;
 
 use namespace HTL\{SGMLStream, TestChain};
-use function HTL\Expect\expect;
 use type Stringish;
+use function HTL\Expect\expect;
 
 <<TestChain\Discover>>
 function stringish_attribute_test(TestChain\Chain $chain)[]: TestChain\Chain {

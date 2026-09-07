@@ -3,6 +3,7 @@ namespace HTL\SGMLStream\Tests;
 
 use namespace HTL\TestChain;
 use function HTL\Expect\expect;
+use function error_reporting;
 
 <<TestChain\Discover>>
 function given_a_spread_of_special_untyped_set_attribute_to_a_tag_with_the_same_attribute_but_with_a_type_test(
@@ -18,13 +19,13 @@ function given_a_spread_of_special_untyped_set_attribute_to_a_tag_with_the_same_
           tuple(dict[], dict['data-special' => 42]),
         );
 
-        $error_level = \error_reporting(0);
+        $error_level = error_reporting(0);
         try {
           // Passing an int to a function which expects a ?string.
           // Both sgml-stream and xhp-lib fail to ensure type safety here.
           takes_nullable_string($type_under_test->:data-special);
         } finally {
-          \error_reporting($error_level);
+          error_reporting($error_level);
         }
       },
     );

@@ -3,6 +3,7 @@ namespace HTL\SGMLStream;
 
 use namespace HH\Lib\{C, Dict};
 use namespace HTL\SGMLStreamInterfaces;
+use type OutOfBoundsException;
 
 /**
  * This Flow requires that constants start with a `!` and variables start with
@@ -72,7 +73,7 @@ final class ExclamationConstFlow implements SGMLStreamInterfaces\CopyableFlow {
   public function getx(string $key)[]: mixed {
     try {
       return $this->data[$key];
-    } catch (\OutOfBoundsException $_) {
+    } catch (OutOfBoundsException $_) {
       throw new _Private\ValueNotPresentException($key);
     }
   }

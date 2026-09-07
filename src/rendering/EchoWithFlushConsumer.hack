@@ -2,6 +2,7 @@
 namespace HTL\SGMLStream;
 
 use namespace HTL\SGMLStreamInterfaces;
+use function flush;
 
 /**
  * Consumes content by using echo and flush().
@@ -12,13 +13,13 @@ final class EchoWithFlushConsumer implements SGMLStreamInterfaces\Consumer {
   }
   public async function receiveWaitNotificationAsync(
   )[defaults]: Awaitable<void> {
-    \flush();
+    flush();
   }
   public async function flushAsync()[defaults]: Awaitable<void> {
-    \flush();
+    flush();
   }
   public async function theDocumentIsCompleteAsync(
   )[defaults]: Awaitable<void> {
-    \flush();
+    flush();
   }
 }

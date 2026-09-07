@@ -2,9 +2,10 @@
 namespace HTL\SGMLStream\_Private;
 
 use namespace HTL\SGMLStreamInterfaces;
+use type Exception;
 
 final class RedeclaredConstantException
-  extends \Exception
+  extends Exception
   implements SGMLStreamInterfaces\RedeclaredConstantException {
   public function __construct(
     private string $key,

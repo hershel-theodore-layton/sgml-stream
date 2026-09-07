@@ -2,9 +2,10 @@
 namespace HTL\SGMLStream\_Private;
 
 use namespace HTL\SGMLStreamInterfaces;
+use type Exception;
 
 final class UseAfterRenderException
-  extends \Exception
+  extends Exception
   implements SGMLStreamInterfaces\UseAfterRenderException {
   public function __construct(classname<mixed> $class)[] {
     parent::__construct($class.' was streamed twice');

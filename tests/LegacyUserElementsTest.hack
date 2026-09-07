@@ -2,6 +2,7 @@
 namespace HTL\SGMLStream\Tests;
 
 use namespace HTL\{SGMLStream, SGMLStreamInterfaces, TestChain};
+use type XHPChild;
 use function HTL\Expect\expect;
 
 <<TestChain\Discover>>
@@ -97,8 +98,8 @@ final class DumpFlow extends SGMLStream\SimpleUserElement {
   )[]: SGMLStreamInterfaces\Streamable {
     return
       <element data-class={static::class}>
-        AW({$flow->get((string)AW::class) as ?\XHPChild})
-        SW({$flow->get((string)SW::class) as ?\XHPChild})
+        AW({$flow->get((string)AW::class) as ?XHPChild})
+        SW({$flow->get((string)SW::class) as ?XHPChild})
       </element>;
   }
 }

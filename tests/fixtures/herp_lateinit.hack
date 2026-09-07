@@ -1,8 +1,10 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
-final xhp class herp_lateinit extends \HTL\SGMLStream\RootElement {
-  use \HTL\SGMLStream\ElementWithOpenAndCloseTags;
+use namespace HTL\SGMLStream;
+
+final xhp class herp_lateinit extends SGMLStream\RootElement {
+  use SGMLStream\ElementWithOpenAndCloseTags;
   const ctx INITIALIZATION_CTX = [];
 
   attribute string herp @lateinit;

@@ -2,9 +2,10 @@
 namespace HTL\SGMLStream\_Private;
 
 use namespace HTL\SGMLStreamInterfaces;
+use type Exception;
 
 final class SnippetNotPrimedException
-  extends \Exception
+  extends Exception
   implements SGMLStreamInterfaces\SnippetNotPrimedException {
   public function __construct(classname<mixed> $class)[] {
     parent::__construct($class.' was not primed before use');

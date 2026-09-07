@@ -2,9 +2,10 @@
 namespace HTL\SGMLStream\_Private;
 
 use namespace HTL\SGMLStreamInterfaces;
+use type Exception;
 
 final class ValueNotPresentException
-  extends \Exception
+  extends Exception
   implements SGMLStreamInterfaces\ValueNotPresentException {
   public function __construct(private string $key)[] {
     parent::__construct(

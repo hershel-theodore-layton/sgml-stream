@@ -4,6 +4,7 @@ namespace HTL\SGMLStream;
 use namespace HH\Lib\{C, Str};
 use namespace HTL\SGMLStreamInterfaces;
 use type XHPChild;
+use function get_class, gettype, htmlspecialchars, is_object, is_scalar;
 
 abstract xhp class RootElement
   implements SGMLStreamInterfaces\Streamable, SGMLStreamInterfaces\Element {
@@ -188,12 +189,12 @@ abstract xhp class RootElement
 
   private static function htmlSpecialChars(mixed $scalar)[defaults]: string {
     invariant(
-      \is_scalar($scalar),
+      is_scalar($scalar),
       '%s does not implement %s, and can not be implicitly htmlspecialchars-ed',
       self::typeName($scalar),
       SGMLStreamInterfaces\Element::class,
     );
-    return \htmlspecialchars((string)$scalar);
+    return htmlspecialchars((string)$scalar);
   }
 
   private static function initializeAttributes(
@@ -274,7 +275,7 @@ abstract xhp class RootElement
   }
 
   private static function typeName(mixed $mixed)[]: string {
-    return \is_object($mixed) ? \get_class($mixed) : \gettype($mixed) as string;
+    return is_object($mixed) ? get_class($mixed) : gettype($mixed) as string;
   }
 
   private static function flattenChildren(

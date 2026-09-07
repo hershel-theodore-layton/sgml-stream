@@ -2,6 +2,7 @@
 namespace HTL\SGMLStream;
 
 use namespace HTL\SGMLStreamInterfaces;
+use type Throwable;
 use function HTL\Pragma\pragma;
 
 /**
@@ -9,7 +10,7 @@ use function HTL\Pragma\pragma;
  */
 final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
   private ?vec<SGMLStreamInterfaces\Snippet> $snippets;
-  private ?\Throwable $caughtThrowable;
+  private ?Throwable $caughtThrowable;
 
   public function __construct(
     private SGMLStreamInterfaces\CanProcessSuccessorFlow $processSuccessorFlow,
@@ -27,7 +28,7 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
     try {
       list($stream, $flow) = ($this->childFunc)($flow);
       $this->snippets = $stream->collect();
-    } catch (\Throwable $t) {
+    } catch (Throwable $t) {
       $this->caughtThrowable = $t;
       return;
     }
