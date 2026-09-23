@@ -90,6 +90,8 @@ use type HTL\SGMLStream\RootElement;
 use type HTL\SGMLStreamInterfaces\{Flow, FragElement, Init, SnippetStream};
 
 final xhp class conditional_comment extends RootElement {
+  const ctx INITIALIZATION_CTX = [];
+
   attribute string if @required;
 
   <<__Override>>
@@ -106,6 +108,8 @@ final xhp class conditional_comment extends RootElement {
 }
 
 final xhp class doctype extends RootElement {
+  const ctx INITIALIZATION_CTX = [];
+
   <<__Override>>
   public function placeIntoSnippetStream(
     SnippetStream $stream,
@@ -117,8 +121,10 @@ final xhp class doctype extends RootElement {
 }
 
 final xhp class frag extends RootElement implements FragElement {
+  const ctx INITIALIZATION_CTX = [];
+
   // `frag` is treated like x:frag because of this  ^^^^^^^^^^^
-  public function getFragChildren(): vec<XHPChild> {
+  public function getFragChildren()[]: vec<XHPChild> {
     return $this->getChildren();
   }
 
