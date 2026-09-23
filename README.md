@@ -136,8 +136,8 @@ As you can see from these examples, you get access to a **dangerous** method on 
  - `DissolvableElement->render(Init<Flow> $flow): Streamable`
  - `SimpleElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Streamable`
  - `SimpleElementWithWritableFlow->render(Descendant<WritableFlow> $descendant_flow, Init<Flow> $init_flow): Streamable`
- - `AsynchronousElement->render(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
- - `AsynchronousElementWithWritableFlow->render(Descendant<WritableFlow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
+ - `AsynchronousElement->renderAsync(Descendant<Flow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
+ - `AsynchronousElementWithWritableFlow->renderAsync(Descendant<WritableFlow> $descendant_flow, Init<Flow> $init_flow): Awaitable<Streamable>`
 
 The `Flow`s are yours for as long as your Hack scope lasts, either via `return` or `throw`. If you are `async`, the `Flow`s stay yours until your Awaitable resolves. Don't try to hold on to the `Flow`s after that. If we implement more optimizations in the future, we will not consider it a BC break if your code behaves differently if you keep the `Flow`s around.
 
