@@ -38,7 +38,7 @@ final class ComposableSnippet implements SGMLStreamInterfaces\Snippet {
       $awaitables[] = $snippet->primeAsync($flow);
     }
 
-    await AwaitAllWaitHandle::fromVec($awaitables);
+    await _Private\await_priming_async($awaitables);
   }
 
   public async function feedBytesToConsumerAsync(

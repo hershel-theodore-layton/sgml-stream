@@ -246,3 +246,15 @@ The API response is back and the `Consumer` is also done. Let's create a `Snippe
 The previous example only had a single `AsynchronousElement`. Real-world webpages will have way more `AsynchronousElement`s in them. Keep in mind that an element which is nested inside of another like this `<A><B></B></A>` does not get primed before the outer element resolves. If there is no data dependency between `A` and `B`, your tree will have fewer `Awaitable`s running at once which reduces the amount of work done concurrently. If you have a choice between nesting `A` in `B` or making them siblings, prefer siblings. That way, both `A` and `B` can `await` at the same time.
 
 If you have multiple `AsynchronousElement`s in your tree, `->primeAsync()` may resolve in any order. We run as many `Awaitable`s as we can at the same time. If an `Awaitable` at the end of the tree resolves before one at the beginning, its return value will get turned into a `SnippetStream` first. It will get primed immediately afterwards. The only process that always happens in order is `->feedBytesToConsumerAsync()`.
+
+## Priming failures
+
+Renderers and compositional snippets wait for all child priming work and retrieve
+its results. If priming fails, rendering throws and the consumer is not notified
+that the document is complete. Within each group of child priming awaitables,
+the first failure in snippet order is propagated after all have settled.
+
+Consumption still runs concurrently with priming, so bytes may already have
+reached the consumer when rendering fails. This does not roll back streamed
+bytes or cancel sibling work. If consumption also fails, which exception escapes
+the concurrent operations is unspecified.

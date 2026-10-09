@@ -26,7 +26,7 @@ final class ConcurrentReusableRenderer
 
     concurrent {
       // Race them all,...
-      await AwaitAllWaitHandle::fromVec($awaitables);
+      await _Private\await_priming_async($awaitables);
       await async {
         foreach ($snippets as $snippet) {
           /* feedBytesToConsumer operates on the awaitables from the race.

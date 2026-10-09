@@ -36,7 +36,7 @@ final class AwaitableSnippet implements SGMLStreamInterfaces\Snippet {
         $awaitables[] = $snippet->primeAsync($flow);
       }
 
-      return tuple($snippets, AwaitAllWaitHandle::fromVec($awaitables));
+      return tuple($snippets, _Private\await_priming_async($awaitables));
     };
 
     list($_, $prime_async_of_children) = await $this->awaitable;
