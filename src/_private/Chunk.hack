@@ -1,7 +1,7 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\_Private;
 
-use namespace HTL\{SGMLStream, SGMLStreamInterfaces};
+use namespace HTL\SGMLStreamInterfaces;
 
 final class Chunk {
   public string $buf = '';
@@ -13,7 +13,7 @@ final class Chunk {
     $this->snippet = $snippet;
   }
 
-  public function getSnippet()[]: SGMLStreamInterfaces\Snippet {
-    return $this->snippet ?? SGMLStream\NullSnippet::instance();
+  public function getSnippet()[]: ?SGMLStreamInterfaces\Snippet {
+    return $this->snippet;
   }
 }

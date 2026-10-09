@@ -28,8 +28,13 @@ final class ConcatenatingStream implements SGMLStreamInterfaces\SnippetStream {
     $out = vec[];
 
     foreach ($this->chunks as $chunk) {
-      $out[] = new SGMLSnippet($chunk->buf);
-      $out[] = $chunk->getSnippet();
+      if ($chunk->buf !== '') {
+        $out[] = new SGMLSnippet($chunk->buf);
+      }
+      $snippet = $chunk->getSnippet();
+      if ($snippet is nonnull) {
+        $out[] = $snippet;
+      }
     }
 
     $this->lastChunk = new _Private\Chunk();

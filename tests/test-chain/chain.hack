@@ -4,7 +4,7 @@ namespace HTL\Project_uN8Tv71L8o0F\GeneratedTestChain;
 use namespace HTL\TestChain;
 use type HTL\Pragma\Pragmas;
 
-<<file: Pragmas(vec['PhaLinters', 'digest:6c1a6e05b7e5e0dd83b2'])>>
+<<file: Pragmas(vec['PhaLinters', 'digest:934bbf50e2c9b756cbe2'])>>
 
 async function tests_async(
   TestChain\ChainController<\HTL\TestChain\Chain> $controller,
@@ -19,6 +19,7 @@ async function tests_async(
       \HTL\SGMLStream\Tests\bugs_in_element_with_open_and_close_tags_and_unescaped_content_test<>,
     )
     ->addTestGroup(\HTL\SGMLStream\Tests\bugs_in_flow_test<>)
+    ->addTestGroup(\HTL\SGMLStream\Tests\concatenating_stream_test<>)
     ->addTestGroup(
       \HTL\SGMLStream\Tests\given_a_spread_of_declared_defaulted_set_attribute_to_valid_target_test<>,
     )
