@@ -114,48 +114,6 @@ abstract xhp class RootElement
     return dict[];
   }
 
-  private function appendXHPChildren(
-    Traversable<?XHPChild> $children,
-  )[write_props]: void {
-    foreach ($children as $child) {
-      if ($child is SGMLStreamInterfaces\FragElement) {
-        foreach ($child->getFragChildren() as $c) {
-          $this->children[] = $c;
-        }
-      } else if ($child is Traversable<_>) {
-        $this->appendTraversable($child);
-      } else if ($child is nonnull) {
-        $this->children[] = $child;
-      }
-    }
-  }
-
-  private function appendTraversable(
-    Traversable<mixed> $children,
-  )[write_props]: void {
-    foreach ($children as $child) {
-      if ($child is SGMLStreamInterfaces\FragElement) {
-        foreach ($child->getFragChildren() as $c) {
-          $this->children[] = $c;
-        }
-      } else if ($child is Traversable<_>) {
-        $this->appendTraversable($child);
-      } else if ($child is XHPChild) {
-        $this->children[] = $child;
-      } else {
-        invariant(
-          $child is null,
-          'A %s contained a non-XHPChild. '.
-          'All children must be an XHPChild. '.
-          'AnyArray<_, _> unconditionally implements XHPChild, '.
-          'even when Tv is not a subtype of XHPChild. '.
-          'This is the reason why the typechecker did not catch this error.',
-          self::typeName($child),
-        );
-      }
-    }
-  }
-
   <<__MemoizeLSB>>
   private static function defaultAttributes(
   )[]: (dict<string, nonnull>, dict<string, arraykey>) {
