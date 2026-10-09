@@ -76,10 +76,10 @@ abstract xhp class RootElement
     foreach ($this->getChildren() as $child) {
       if ($child is SGMLStreamInterfaces\Streamable) {
         $child->placeIntoSnippetStream($stream, $init_flow);
-      } else if ($child is Traversable<_>) {
-        self::placeTraversableIntoSnippetStream($stream, $init_flow, $child);
       } else if ($child is SGMLStreamInterfaces\ToSGMLStringAsync) {
         $stream->addSnippet(new ToSGMLStringAsyncSnippet($child));
+      } else if ($child is Traversable<_>) {
+        self::placeTraversableIntoSnippetStream($stream, $init_flow, $child);
       } else /*if ($child is scalar) */ {
         $stream->addSafeSGML(self::htmlSpecialChars($child));
       }
@@ -94,10 +94,10 @@ abstract xhp class RootElement
     foreach ($children as $child) {
       if ($child is SGMLStreamInterfaces\Streamable) {
         $child->placeIntoSnippetStream($stream, $init_flow);
-      } else if ($child is Traversable<_>) {
-        self::placeTraversableIntoSnippetStream($stream, $init_flow, $child);
       } else if ($child is SGMLStreamInterfaces\ToSGMLStringAsync) {
         $stream->addSnippet(new ToSGMLStringAsyncSnippet($child));
+      } else if ($child is Traversable<_>) {
+        self::placeTraversableIntoSnippetStream($stream, $init_flow, $child);
       } else if ($child is nonnull /* $child is scalar */) {
         $stream->addSafeSGML(self::htmlSpecialChars($child));
       }
@@ -246,6 +246,11 @@ abstract xhp class RootElement
         foreach ($child->getFragChildren() as $c) {
           $flattened[] = $c;
         }
+      } else if (
+        $child is SGMLStreamInterfaces\Streamable ||
+        $child is SGMLStreamInterfaces\ToSGMLStringAsync
+      ) {
+        $flattened[] = $child;
       } else if ($child is Traversable<_>) {
         foreach (self::flattenTraversable($child) as $c) {
           $flattened[] = $c;
@@ -266,6 +271,11 @@ abstract xhp class RootElement
         foreach ($child->getFragChildren() as $c) {
           yield $c;
         }
+      } else if (
+        $child is SGMLStreamInterfaces\Streamable ||
+        $child is SGMLStreamInterfaces\ToSGMLStringAsync
+      ) {
+        yield $child;
       } else if ($child is Traversable<_>) {
         foreach (self::flattenTraversable($child) as $c) {
           yield $c;
