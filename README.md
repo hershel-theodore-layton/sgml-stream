@@ -158,15 +158,6 @@ A common response: No, I want to stream the string, without escaping it. Please 
 
 Sigh...: There is a way to get what you want, but be careful what you wish for. The interface `ToSGMLStringAsync` is the thing you are looking for. This interface is an escape hatch which introduces security risks which might come back to bite you. This interface bypasses all parts of sgml-stream that try to keep you safe. It streams your string **directly with no escaping applied** to your consumer. This interface is meant to be used very sparingly.
 
-### Text encoding
-
-Ordinary text children and attribute values are escaped as UTF-8. Malformed
-UTF-8 sequences are replaced with U+FFFD (�), preserving the valid surrounding
-text. This also applies to declared, data, and aria attributes. Applications
-using another encoding must convert values to UTF-8 before rendering. Raw
-script/style content and explicitly safe markup bypass this escaping policy.
-
-
 ## Flows in version zero
 
 _Historical note_
