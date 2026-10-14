@@ -158,12 +158,6 @@ A common response: No, I want to stream the string, without escaping it. Please 
 
 Sigh...: There is a way to get what you want, but be careful what you wish for. The interface `ToSGMLStringAsync` is the thing you are looking for. This interface is an escape hatch which introduces security risks which might come back to bite you. This interface bypasses all parts of sgml-stream that try to keep you safe. It streams your string **directly with no escaping applied** to your consumer. This interface is meant to be used very sparingly.
 
-## Flows in version zero
-
-_Historical note_
-
-For the longest time, when this library had version v0.x, there was only one `Flow` kind. This `Flow` has been renamed to `Descendant<Flow>` and is handed from ancestor to descendant. Since the release of `v1.0`, there are three types of flows: `Descendant<Flow>`, `Init<Flow>`, and `Successor<Flow>`. If you see a mention of `Flow` without a specific type, it is likely to be a `Descendant<Flow>`.
-
 ### Text encoding
 
 Ordinary text children and attribute values are escaped as UTF-8. Malformed
@@ -171,3 +165,10 @@ UTF-8 sequences are replaced with U+FFFD (�), preserving the valid surrounding
 text. This also applies to declared, data, and aria attributes. Applications
 using another encoding must convert values to UTF-8 before rendering. Raw
 script/style content and explicitly safe markup bypass this escaping policy.
+
+
+## Flows in version zero
+
+_Historical note_
+
+For the longest time, when this library had version v0.x, there was only one `Flow` kind. This `Flow` has been renamed to `Descendant<Flow>` and is handed from ancestor to descendant. Since the release of `v1.0`, there are three types of flows: `Descendant<Flow>`, `Init<Flow>`, and `Successor<Flow>`. If you see a mention of `Flow` without a specific type, it is likely to be a `Descendant<Flow>`.
