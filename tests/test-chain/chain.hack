@@ -4,7 +4,7 @@ namespace HTL\Project_uN8Tv71L8o0F\GeneratedTestChain;
 use namespace HTL\TestChain;
 use type HTL\Pragma\Pragmas;
 
-<<file: Pragmas(vec['PhaLinters', 'digest:2559f50f111e166ae1d8'])>>
+<<file: Pragmas(vec['PhaLinters', 'digest:5defaf532b0d00dd4936'])>>
 
 async function tests_async(
   TestChain\ChainController<\HTL\TestChain\Chain> $controller,
@@ -108,6 +108,7 @@ async function tests_async(
     ->addTestGroup(\HTL\SGMLStream\Tests\snippet_priming_failure_test<>)
     ->addTestGroup(\HTL\SGMLStream\Tests\stringish_attribute_test<>)
     ->addTestGroup(\HTL\SGMLStream\Tests\successor_flow_test<>)
+    ->addTestGroup(\HTL\SGMLStream\Tests\utf8_escaping_test<>)
     ->addTestGroup(\HTL\SGMLStream\Tests\with_a_little_bit_of_everything<>)
     ->addTestGroup(\HTL\SGMLStream\Tests\with_nulls_test<>)
     ->addTestGroup(\HTL\SGMLStream\Tests\xhp_in_pure_context_test<>);

@@ -3,6 +3,7 @@ namespace HTL\SGMLStream;
 
 use namespace HTL\SGMLStreamInterfaces;
 use function htmlspecialchars;
+use const ENT_COMPAT, ENT_SUBSTITUTE;
 
 function render_opening_tag(
   string $tag,
@@ -21,12 +22,20 @@ function render_opening_tag(
       // `StringishObject` is supported in HHVM version 4.115 and above.
       // When this cast starts failing at runtime, support for legacy HHVM
       // versions will have to be dropped.
-      $out .= ' '.$key.'="'.htmlspecialchars((string)$value).'"';
+      $out .= ' '.
+        $key.
+        '="'.
+        htmlspecialchars((string)$value, ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8').
+        '"';
     }
   }
 
   foreach ($data_and_aria as $key => $value) {
-    $out .= ' '.$key.'="'.htmlspecialchars((string)$value).'"';
+    $out .= ' '.
+      $key.
+      '="'.
+      htmlspecialchars((string)$value, ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8').
+      '"';
   }
 
   $out .= '>';

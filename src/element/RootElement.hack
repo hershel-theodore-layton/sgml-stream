@@ -5,6 +5,7 @@ use namespace HH\Lib\{C, Str};
 use namespace HTL\SGMLStreamInterfaces;
 use type XHPChild;
 use function get_class, gettype, htmlspecialchars, is_object, is_scalar;
+use const ENT_COMPAT, ENT_SUBSTITUTE;
 
 abstract xhp class RootElement
   implements SGMLStreamInterfaces\Streamable, SGMLStreamInterfaces\Element {
@@ -152,7 +153,8 @@ abstract xhp class RootElement
       self::typeName($scalar),
       SGMLStreamInterfaces\Element::class,
     );
-    return htmlspecialchars((string)$scalar);
+    return
+      htmlspecialchars((string)$scalar, ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8');
   }
 
   private static function initializeAttributes(
