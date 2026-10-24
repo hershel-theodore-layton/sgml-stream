@@ -1,10 +1,10 @@
 /** sgml-stream is MIT licensed, see /LICENSE. */
 namespace HTL\SGMLStream\Tests;
 
+use namespace HH\Lib\C;
 use namespace HTL\{SGMLStream, SGMLStreamInterfaces, TestChain};
 use function HTL\Expect\expect;
 use function HTL\Pragma\pragma;
-use function count;
 
 <<TestChain\Discover>>
 function concatenating_stream_test(TestChain\Chain $chain)[]: TestChain\Chain {
@@ -27,7 +27,7 @@ function concatenating_stream_test(TestChain\Chain $chain)[]: TestChain\Chain {
 
         $stream->addSafeSGML('reused');
         $collected = $stream->collect();
-        expect(count($collected))->toEqual(1);
+        expect(C\count($collected))->toEqual(1);
         expect($collected[0] is SGMLStream\SGMLSnippet)->toEqual(true);
         expect($stream->collect())->toEqual(vec[]);
       },
