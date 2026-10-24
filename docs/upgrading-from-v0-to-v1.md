@@ -127,7 +127,7 @@ The following six types have been kept for backwards compatibility:
  - `ConcurrentSingleUseRenderer` (the `Renderer` interface is deprecated)
  - `AsynchronousUserElement`
  - `AsynchronousUserElementWithWritableFlow`
- - `DisposableUserElement`
+ - `DissolvableUserElement`
  - `SimpleUserElement`
  - `SimpleUserElementWithWritableFlow`
 

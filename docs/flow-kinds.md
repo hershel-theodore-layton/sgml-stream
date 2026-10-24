@@ -63,8 +63,8 @@ A `Descendant<Flow>` is suited for all kinds of data generated at any level of t
 
 If the data is rarely read, highly mutable, and append-like in nature, consider `Successor<Flow>`. There is only one `Successor<Flow>` (no copies are made during rendering). All access to the `Successor<Flow>` is strictly ordered. There are two modes of use when dealing with a `Successor<Flow>`
 
- - Deferred read and write access to this flow incur no performance penalty. If you can "schedule" your reads and writes from within your `render()` method, but you don't change your output based on the contents of this flow, you can defer your reads and writes.
- - Non-deferred read and write access to this flow inside a `render()` method can incur a heavy performance cost. Your `render()` method will not be executed as soon as your parent is done rendering. Instead, your `render()` call is postponed until every predecessor is done and has written its content to the `Consumer`. If your element has children, those children won't be rendered either until all predecessors have written their contents to the `Consumer`.
+ - Deferred read and write access to this flow incur no performance penalty. If you can "schedule" your reads and writes from within your `render()` method, but you don't change your output based on the contents of this flow, you can defer your reads and writes using `CallbackSuccessorFlow::setSuccessorFlowCallback()`.
+ - Non-deferred read and write access to this flow inside `AsynchronousElementWithSuccessorFlow::composeAsync()` can incur a heavy performance cost. Your `composeAsync()` method will not be executed as soon as your parent is done rendering. Instead, your `composeAsync()` call is postponed until every predecessor is done and has written its content to the `Consumer`. If your element has children, those children won't be rendered either until all predecessors have written their contents to the `Consumer`.
 
 The motivating example for using `Successor<Flow>` is:
 
@@ -85,7 +85,7 @@ The motivating example for using `Successor<Flow>` is:
 </body>
 ```
 
-`WritesScriptTag` knows that every registration from the predecessors must have completed when its `render()` method is called. Therefore, it will not miss writing out an event listener.
+`WritesScriptTag` knows that every registration from the predecessors must have completed when its `composeAsync()` method is called. Therefore, it will not miss writing out an event listener.
 
 Before the introduction of `Successor<Flow>`, this pattern required creating your own `Snippet` class. You would also not be able to emit multiple `<WritesScriptTag />` elements on a page. The strict order imposed by `Successor<Flow>` makes it trivial to coordinate multiple `<WritesScriptTag />` elements on a page. Each `<WritesScriptTag />` will empty the registrations it handled. The next will observe the registrations made by elements after the previous `<WritesScriptTag />`.
 

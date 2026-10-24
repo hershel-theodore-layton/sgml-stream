@@ -12,7 +12,7 @@ Sgml-stream offers five useful built-in base classes. For a historical note, [cl
  - `AsynchronousElement`
  - `AsynchronousElementWithWritableFlow`
 
-The `WithWritableFlow` suffix applies to the read-write permissions on the `Descendant<Flow>`. The `Init<Flow>` is always read-only and the `Successor<Flow>` is always read-write (either deferred to directly from `->render()`).
+The `WithWritableFlow` suffix applies to the read-write permissions on the `Descendant<Flow>`. The `Init<Flow>` is always read-only and the `Successor<Flow>` is always read-write (either deferred through `CallbackSuccessorFlow` or accessed from `AsynchronousElementWithSuccessorFlow::composeAsync()`).
 
 `DissolvableElement` is the fastest base class meant for creating cheap wrapping elements. This element type dissolves as soon as it is added to a stream and appends the return value of `->render()` immediately. This reduces the amount of tiny objects and strings that need to be created to render your tree. The logic in `->render()` runs before any async work starts. So if your method takes a long time, it might be beneficial to use a `SimpleElement` instead, since this code will start running whilst your async work has been dispatched. Switching to and from this element type causes an observable behavior difference if you depended on the order in which `->render()` methods executed. If your element is not pure (rendering it has a side effect or it reads from a global), do not use this type. A `DissolvableElement` only has access to the `Init<Flow>`. It can not read from or write to the `Descendant<Flow>` or the `Successor<Flow>`.
 

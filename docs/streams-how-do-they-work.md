@@ -70,11 +70,11 @@ Let's convert this representation into a `SnippetStream`.
 
 ## Priming the SnippetStream without UserElements
 
-In the next step, we hand this `SnippetStream` to a `Renderer`. The `Renderer` requires a `Flow`. This `Flow` is used as the `Descendant<Flow>`. When converting a tree to a `SnippetStream`, we didn't have a `Descendant<Flow>` yet. We only had the `Init<Flow>`. The `Renderer` collects the `Snippet`s from the `SnippetStream`. It then calls `->primeAsync(Descendant<CopyableFlow> $flow): Awaitable<void>` on each of them and stores the Awaitables. Each `Snippet` will now fire off all the work it needs to do. Since the `SnippetStream` we just created doesn't need to do any work, this step is a no-op.
+`ConcurrentReusableRenderer::renderAsync()` takes a `SnippetStream`, a `Streamable`, a `Consumer`, a `Descendant<CopyableFlow>`, an `Init<Flow>`, and a `Successor<WritableFlow>`. It first converts the `Streamable` tree to a `SnippetStream` using the `Init<Flow>`. When converting a tree to a `SnippetStream`, we didn't have a `Descendant<Flow>` yet. We only had the `Init<Flow>`. The `Renderer` collects the `Snippet`s from the `SnippetStream`. It then calls `->primeAsync(Descendant<CopyableFlow> $flow): Awaitable<void>` on each of them and stores the Awaitables. Each `Snippet` will now fire off all the work it needs to do. Since the `SnippetStream` we just created doesn't need to do any work, this step is a no-op.
 
 ## Consuming the primed SnippetStream without UserElements
 
-After collecting all Awaitables from the `->primeAsync()` calls, **but before `await`ing them**, we start the next step. We loop over all the `Snippet`s in turn, whilst concurrently awaiting the Awaitables. We call `->feedBytesToConsumerAsync(Consumer $consumer): Awaitable<void>` on the `Snippet`s in order. If all the work that a `Snippet` needs to do has already finished, it will call `Consumer->consumeAsync()` immediately. Our `SnippetStream` does not have any work to do after construction, so `Consumer` is fed all the strings at a high rate. Once this process completes, the `Renderer` calls `Consumer->theDocumentIsCompleteAsync()` and `await`s the returned `Awaitable`. Once it resolves, the rendering is done.
+After collecting all Awaitables from the `->primeAsync()` calls, **but before `await`ing them**, we start the next step. We loop over all the `Snippet`s in turn, whilst concurrently awaiting the Awaitables. We call `->feedBytesToConsumerAsync(Consumer $consumer, Successor<WritableFlow> $successor_flow): Awaitable<void>` on the `Snippet`s in order. If all the work that a `Snippet` needs to do has already finished, it will call `Consumer->consumeAsync()` immediately. Our `SnippetStream` does not have any work to do after construction, so `Consumer` is fed all the strings at a high rate. Once this process completes, the `Renderer` calls `Consumer->theDocumentIsCompleteAsync()` and `await`s the returned `Awaitable`. Once it resolves, the rendering is done.
 
 ## Constructing a SnippetStream from a tree with UserElements
 
@@ -136,9 +136,11 @@ In the next step, the Renderer gets a go. The renderer _has_ a `Descendant<Flow>
 
 ```PHP
 final xhp class MyElement extends SimpleElement {
+  use IgnoreSuccessorFlow;
+
   <<__Override>>
   protected function render(Descendant<Flow> $descendant_flow, Init<Flow> $_init_flow): Streamable {
-    return <div class={$descendant_flow->getx('dark-theme') ? "night" : "bright"}>
+    return <div class={($descendant_flow->getx('dark-theme') as bool) ? "night" : "bright"}>
       {$this->getChildren()}
     </div>;
   }
@@ -235,11 +237,11 @@ The previous step set as many Awaitables in motion as it could. However, they we
 
 We then `await` the 3 top-level `Awaitable`s from the top-level `->primeAsync()` calls. We concurrently start looping over the `Snippet`s and try to get bytes of content from them.
 
-`<div>` is ready immediately, so this gets fed to the consumer right there and then. We then give control to `ComposableSnippet->feedBytesToConsumerAsync()`, where we will spend the longest amount of time. Within this `ComposableSnippet`, there are 5 `Snippet`s. `<div class="night">` and `<span>` are ready, since there is no I/O between them and the `Renderer`. They are fed to the `Consumer` immediately. `ComposableSnippet` then hands control to `AwaitableSnippet->feedToConsumerAsync()`. Although the `Awaitable` has already been running for a short while, it is not ready yet. The API has not responded yet.
+`<div>` is ready immediately, so this gets fed to the consumer right there and then. We then give control to `ComposableSnippet->feedBytesToConsumerAsync()`, where we will spend the longest amount of time. Within this `ComposableSnippet`, there are 5 `Snippet`s. `<div class="night">` and `<span>` are ready, since there is no I/O between them and the `Renderer`. They are fed to the `Consumer` immediately. `ComposableSnippet` then hands control to `AwaitableSnippet->feedBytesToConsumerAsync()`. Although the `Awaitable` has already been running for a short while, it is not ready yet. The API has not responded yet.
 
 `AwaitableSnippet` decides to notify the `Consumer` that the next bit of content is stuck behind `await`ing something using `Consumer->receiveWaitNotificationAsync()`. The `Consumer` _might_ use this downtime to flush some buffer to the network. It might also return immediately, depending on what _you_ want it to do. If the API response comes back whilst the `Consumer`'s Awaitable is not resolved yet, we **can not** continue. The contract of `Consumer` does not require correct behavior when two methods are called on it at the same time. This means that you should be careful about the work you decide to do in this notification method. You could end up stalling the `Renderer`.
 
-The API response is back and the `Consumer` is also done. Let's create a `SnippetStream` from the result of `->renderAsync()` quickly. We consume this stream and the `Awaitable` from `AwaitableSnippet->feedBytesToConsumer()` resolves. `ComposableSnippet` was waiting for that. It then feeds the remaining `</span>` and `</div>` to the `Consumer`. When that completes, its own returned `Awaitable` resolves. The `Renderer` can finally move on to the last `</div>` and call `Consumer->theDocumentIsCompleteAsync()`. The document is complete and the `Renderer` returns from `Renderer->renderAsync()`.
+The API response is back and the `Consumer` is also done. Let's create a `SnippetStream` from the result of `->renderAsync()` quickly. We consume this stream and the `Awaitable` from `AwaitableSnippet->feedBytesToConsumerAsync()` resolves. `ComposableSnippet` was waiting for that. It then feeds the remaining `</span>` and `</div>` to the `Consumer`. When that completes, its own returned `Awaitable` resolves. The `Renderer` can finally move on to the last `</div>` and call `Consumer->theDocumentIsCompleteAsync()`. The document is complete and the `Renderer` returns from `Renderer->renderAsync()`.
 
 ## Multiple async operations in one tree
 
